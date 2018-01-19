@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:helperapp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" Drop="Window_Drop">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+    <StackPanel Orientation="Vertical">
+        <TextBlock Name="Status">Use Visual Studio</TextBlock>
+        <StackPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed">
+            <Button Click="OnMefClick">MEF Cache</Button>
+            <Button Click="OnActivityLogClick">Activity log</Button>
+            <Button Click="OnCommandPromptClick">Command prompt</Button>
+            <Button Click="OnInstallLocationClick">Install location</Button>
+        </StackPanel>
+    </StackPanel>
 </Window>
