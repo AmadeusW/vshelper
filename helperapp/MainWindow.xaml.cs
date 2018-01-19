@@ -90,11 +90,12 @@ namespace helperapp
             }
         }
 
-        private static void UpdateUI(string id, string arguments, string path)
+        private static void UpdateUI(VSData data, string arguments, string path)
         {
-            var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.StartsWith("rootSuffix"))?.Substring("rootSuffix".Length + 1);
-            ThisWindow.Status.Text = "Visual Studio 2017 " + rootSuffix; // Supprting versions other than 2017 means changing paths in DevenvAnalyzer
-            ThisWindow.RecentId = id;
+            var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.ToLower().StartsWith("rootsuffix"))?.Substring("rootsuffix".Length + 1);
+            ThisWindow.Status.Text = data.InstallationChannel + " " + rootSuffix;
+            ThisWindow.Version.Text = data.InstallationVersion;
+            ThisWindow.RecentId = data.InstallationId;
             ThisWindow.RecentPath = path;
             ThisWindow.RecentHive = rootSuffix;
             ThisWindow.AllUI.Visibility = Visibility.Visible;

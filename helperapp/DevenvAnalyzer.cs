@@ -7,30 +7,62 @@ using System.Threading.Tasks;
 
 namespace helperapp
 {
+    struct VSData
+    {
+        public string InstallationId;
+        public string InstallationChannel;
+        public string InstallationVersion;
+    }
+
     static class DevenvAnalyzer
     {
-        static Dictionary<string, string> PathToIdMap = new Dictionary<string, string>();
+        static Dictionary<string, VSData> PathToDataMap = new Dictionary<string, VSData>();
         const string installationIdString = "InstallationID";
+        const string installationChannelString = "ChannelTitle";
+        const string installationVersionString = "DisplayVersion";
 
-        public static string GetVsId(string path)
+        public static VSData GetVsId(string path)
         {
-            string installationId;
-            if (!PathToIdMap.TryGetValue(path, out installationId))
+            VSData vsData;
+            if (!PathToDataMap.TryGetValue(path, out vsData))
             {
                 var directory = Path.GetDirectoryName(path);
                 var configurationFile = Path.Combine(directory, "devenv.isolation.ini");
+
+                string installationId = String.Empty;
+                string installationChannel = String.Empty;
+                string installationVersion = String.Empty;
                 foreach (var line in File.ReadAllLines(configurationFile))
                 {
                     if (line.StartsWith(installationIdString))
                     {
                         installationId = line.Substring(line.IndexOf('=') + 1);
-                        PathToIdMap[path] = installationId;
-                        return installationId;
                     }
+                    if (line.StartsWith(installationChannelString))
+                    {
+                        installationChannel = line.Substring(line.IndexOf('=') + 1);
+                    }
+                    if (line.StartsWith(installationVersionString))
+                    {
+                        installationVersion = line.Substring(line.IndexOf('=') + 1);
+                    }
+
                 }
-                throw new Exception($"Could not find {installationIdString} in {configurationFile}");
+                if (String.IsNullOrEmpty(installationId))
+                    throw new Exception($"Could not find {installationIdString} in {configurationFile}");
+                if (String.IsNullOrEmpty(installationChannel))
+                    throw new Exception($"Could not find {installationChannel} in {configurationFile}");
+                if (String.IsNullOrEmpty(installationVersion))
+                    throw new Exception($"Could not find {installationVersion} in {configurationFile}");
+                vsData = new VSData
+                {
+                    InstallationId = installationId,
+                    InstallationChannel = installationChannel.Trim('"'),
+                    InstallationVersion = installationVersion.Trim('"'),
+                };
+                PathToDataMap[path] = vsData;
             }
-            return installationId;
+            return vsData;
         }
 
         internal static string GetMefErrorsPath(string id, string hive)

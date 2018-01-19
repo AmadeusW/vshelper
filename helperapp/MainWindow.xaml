@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:helperapp"
         mc:Ignorable="d"
         Title="VS Helper" 
-        Height="130" Width="260" 
+        SizeToContent="WidthAndHeight"
         Loaded="Window_Loaded"
         WindowStyle="ToolWindow"
         >
     <Window.Resources>
         <Style TargetType="{x:Type TextBlock}" x:Key="Header">
-            <Setter Property="Margin" Value="5"></Setter>
+            <Setter Property="Margin" Value="5 0 5 0"></Setter>
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
         <Style TargetType="{x:Type Button}">
@@ -22,7 +22,9 @@
         </Style>
     </Window.Resources>
     <StackPanel Orientation="Vertical">
-        <StackPanel Orientation="Horizontal" Name="AllUI" Visibility="Visible">
+        <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}" MinWidth="230" MaxWidth="230" Margin="5 5 5 0">Use Visual Studio to get started</TextBlock>
+        <TextBlock Name="Version" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Version, Path=Text}" MinWidth="230" MaxWidth="230" Margin="5 0 5 5"></TextBlock>
+        <StackPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed">
             <Button Click="OnMefClick">
                 <TextBlock>MEF<LineBreak/>Errors</TextBlock>
             </Button>
@@ -32,6 +34,5 @@
             <Button Click="OnCommandPromptClick">CMD</Button>
             <Button Click="OnInstallLocationClick">DIR</Button>
         </StackPanel>
-        <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}">Use Visual Studio</TextBlock>
     </StackPanel>
 </Window>
