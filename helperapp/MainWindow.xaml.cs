@@ -93,7 +93,7 @@ namespace helperapp
         private static void UpdateUI(string id, string arguments, string path)
         {
             var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.StartsWith("rootSuffix"))?.Substring("rootSuffix".Length + 1);
-            ThisWindow.Status.Text = "Microsoft Visual Studio 2017 " + rootSuffix;
+            ThisWindow.Status.Text = "Visual Studio 2017 " + rootSuffix; // Supprting versions other than 2017 means changing paths in DevenvAnalyzer
             ThisWindow.RecentId = id;
             ThisWindow.RecentPath = path;
             ThisWindow.RecentHive = rootSuffix;

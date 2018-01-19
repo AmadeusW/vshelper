@@ -5,14 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:helperapp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+        Title="VS Helper" 
+        Height="130" Width="260" 
+        Loaded="Window_Loaded"
+        WindowStyle="ToolWindow"
+        >
+    <Window.Resources>
+        <Style TargetType="{x:Type TextBlock}" x:Key="Header">
+            <Setter Property="Margin" Value="5"></Setter>
+            <Setter Property="FontSize" Value="11"></Setter>
+        </Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Height" Value="60"></Setter>
+            <Setter Property="Width" Value="60"></Setter>
+            <Setter Property="FontSize" Value="11"></Setter>
+        </Style>
+    </Window.Resources>
     <StackPanel Orientation="Vertical">
-        <TextBlock Name="Status">Use Visual Studio</TextBlock>
-        <StackPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed">
-            <Button Click="OnMefClick">MEF Cache</Button>
-            <Button Click="OnActivityLogClick">Activity log</Button>
-            <Button Click="OnCommandPromptClick">Command prompt</Button>
-            <Button Click="OnInstallLocationClick">Install location</Button>
+        <StackPanel Orientation="Horizontal" Name="AllUI" Visibility="Visible">
+            <Button Click="OnMefClick">
+                <TextBlock>MEF<LineBreak/>Errors</TextBlock>
+            </Button>
+            <Button Click="OnActivityLogClick">
+                <TextBlock>Activity<LineBreak/>Log</TextBlock>
+            </Button>
+            <Button Click="OnCommandPromptClick">CMD</Button>
+            <Button Click="OnInstallLocationClick">DIR</Button>
         </StackPanel>
+        <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}">Use Visual Studio</TextBlock>
     </StackPanel>
 </Window>
