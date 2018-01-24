@@ -16,15 +16,15 @@
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
         <Style TargetType="{x:Type Button}">
-            <Setter Property="Height" Value="60"></Setter>
+            <Setter Property="Height" Value="40"></Setter>
             <Setter Property="Width" Value="60"></Setter>
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
     </Window.Resources>
     <StackPanel Orientation="Vertical">
-        <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}" MinWidth="230" MaxWidth="230" Margin="5 5 5 0">Use Visual Studio to get started</TextBlock>
-        <TextBlock Name="Version" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Version, Path=Text}" MinWidth="230" MaxWidth="230" Margin="5 0 5 5"></TextBlock>
-        <StackPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed">
+        <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}" MinWidth="230" Margin="5 5 5 0">Use Visual Studio to get started</TextBlock>
+        <TextBlock Name="Version" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Version, Path=Text}" MinWidth="230" Margin="5 0 5 5"></TextBlock>
+        <WrapPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed">
             <Button Click="OnMefClick">
                 <TextBlock>MEF<LineBreak/>Errors</TextBlock>
             </Button>
@@ -32,7 +32,12 @@
                 <TextBlock>Activity<LineBreak/>Log</TextBlock>
             </Button>
             <Button Click="OnCommandPromptClick">CMD</Button>
-            <Button Click="OnInstallLocationClick">DIR</Button>
-        </StackPanel>
+            <Button Click="OnExtensionsClick">
+                <TextBlock>Extension<LineBreak/>DIR</TextBlock>
+            </Button>
+            <Button Click="OnInstallLocationClick">
+                <TextBlock>Installation<LineBreak/>DIR</TextBlock>
+            </Button>
+        </WrapPanel>
     </StackPanel>
 </Window>

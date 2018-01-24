@@ -97,5 +97,13 @@ namespace helperapp
         {
             return Path.GetDirectoryName(path);
         }
+
+        internal static string GetExtensionPath(string id, string hive)
+        {
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Microsoft\\VisualStudio\\15.0_" + id + hive,
+                "Extensions");
+        }
     }
 }

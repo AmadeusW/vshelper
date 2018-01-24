@@ -152,5 +152,18 @@ namespace helperapp
                 Status.Text = ex.Message;
             }
         }
+
+        private void OnExtensionsClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var extensionPath = DevenvAnalyzer.GetExtensionPath(RecentId, RecentHive);
+                Process.Start(extensionPath);
+            }
+            catch (Exception ex)
+            {
+                Status.Text = ex.Message;
+            }
+        }
     }
 }
