@@ -1,5 +1,5 @@
 # VS Helper
-Tool that aids development of Visual Studio and its extensions
+Tool that aids development of Visual Studio and its extensions. [Download](https://github.com/AmadeusW/vshelper/releases)
 
 ![v1.1 screenshot](https://user-images.githubusercontent.com/1673956/35591478-eb375a02-05be-11e8-9777-101e4c3f314e.png)
 
