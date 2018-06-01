@@ -10,6 +10,7 @@
         Loaded="Window_Loaded"
         WindowStyle="ToolWindow"
         Topmost="True"
+        Closed="Window_Closed"
         >
     <Window.Resources>
         <Style TargetType="{x:Type TextBlock}" x:Key="Header">

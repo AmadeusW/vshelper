@@ -28,12 +28,13 @@ namespace helperapp
         public MainWindow()
         {
             InitializeComponent();
-            ThisWindow = this;
+            AppWindow = this;
         }
 
         public delegate void WinEventProc(IntPtr hWinEventHook, User32.WindowsEventHookType @event, IntPtr hwnd, int idObject, int idChild, int dwEventThread, uint dwmsEventTime);
-        WinEventProc Listener;
-        static MainWindow ThisWindow;
+        private WinEventProc Listener;
+        private static MainWindow AppWindow;
+        private User32.SafeEventHookHandle Hook;
 
         public string RecentId { get; private set; }
         public string RecentPath { get; private set; }
@@ -45,12 +46,17 @@ namespace helperapp
             {
                 Listener = new WinEventProc(target);
                 var functionPointer = Marshal.GetFunctionPointerForDelegate(Listener);
-                User32.SetWinEventHook(User32.WindowsEventHookType.EVENT_SYSTEM_FOREGROUND, User32.WindowsEventHookType.EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, functionPointer, 0, 0, User32.WindowsEventHookFlags.WINEVENT_OUTOFCONTEXT);
+                Hook = User32.SetWinEventHook(User32.WindowsEventHookType.EVENT_SYSTEM_FOREGROUND, User32.WindowsEventHookType.EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, functionPointer, 0, 0, User32.WindowsEventHookFlags.WINEVENT_OUTOFCONTEXT);
             }
             catch (Exception ex)
             {
-                ThisWindow.Status.Text = ex.Message;
+                AppWindow.Status.Text = ex.Message;
             }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Hook?.Dispose();
         }
 
         static void target(IntPtr hWinEventHook, User32.WindowsEventHookType @event, IntPtr hwnd, int idObject, int idChild, int dwEventThread, uint dwmsEventTime)
@@ -60,7 +66,7 @@ namespace helperapp
                 var threadId = User32.GetWindowThreadProcessId(hwnd, out int processId);
                 if (processId == 0)
                 {
-                    ThisWindow.Status.Text = "Unable to get process data";
+                    AppWindow.Status.Text = "Unable to get process data";
                 }
                 else
                 {
@@ -86,19 +92,19 @@ namespace helperapp
             }
             catch (Exception ex)
             {
-                ThisWindow.Status.Text = ex.Message;
+                AppWindow.Status.Text = ex.Message;
             }
         }
 
         private static void UpdateUI(VSData data, string arguments, string path)
         {
             var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.ToLower().StartsWith("rootsuffix"))?.Substring("rootsuffix".Length + 1);
-            ThisWindow.Status.Text = data.InstallationChannel + " " + rootSuffix;
-            ThisWindow.Version.Text = data.InstallationVersion;
-            ThisWindow.RecentId = data.InstallationId;
-            ThisWindow.RecentPath = path;
-            ThisWindow.RecentHive = rootSuffix;
-            ThisWindow.AllUI.Visibility = Visibility.Visible;
+            AppWindow.Status.Text = data.InstallationChannel + " " + rootSuffix;
+            AppWindow.Version.Text = data.InstallationVersion;
+            AppWindow.RecentId = data.InstallationId;
+            AppWindow.RecentPath = path;
+            AppWindow.RecentHive = rootSuffix;
+            AppWindow.AllUI.Visibility = Visibility.Visible;
         }
 
         private void OnMefClick(object sender, RoutedEventArgs e)
