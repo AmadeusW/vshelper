@@ -9,6 +9,7 @@
         SizeToContent="WidthAndHeight"
         Loaded="Window_Loaded"
         WindowStyle="ToolWindow"
+        Topmost="True"
         >
     <Window.Resources>
         <Style TargetType="{x:Type TextBlock}" x:Key="Header">
