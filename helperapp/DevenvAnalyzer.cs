@@ -13,6 +13,7 @@ namespace helperapp
         const string installationIdString = "InstallationID";
         const string installationChannelString = "ChannelTitle";
         const string installationVersionString = "DisplayVersion";
+        const string skuString = "SKU";
 
         public static VSData GetVsId(string path)
         {
@@ -25,6 +26,7 @@ namespace helperapp
                 string installationId = String.Empty;
                 string installationChannel = String.Empty;
                 string installationVersion = String.Empty;
+                string sku = String.Empty;
                 foreach (var line in File.ReadAllLines(configurationFile))
                 {
                     if (line.StartsWith(installationIdString))
@@ -39,19 +41,25 @@ namespace helperapp
                     {
                         installationVersion = line.Substring(line.IndexOf('=') + 1);
                     }
-
+                    if (line.StartsWith(skuString))
+                    {
+                        sku = line.Substring(line.IndexOf('=') + 1);
+                    }
                 }
                 if (String.IsNullOrEmpty(installationId))
                     throw new Exception($"Could not find {installationIdString} in {configurationFile}");
                 if (String.IsNullOrEmpty(installationChannel))
-                    throw new Exception($"Could not find {installationChannel} in {configurationFile}");
+                    throw new Exception($"Could not find {installationChannelString} in {configurationFile}");
                 if (String.IsNullOrEmpty(installationVersion))
-                    throw new Exception($"Could not find {installationVersion} in {configurationFile}");
+                    throw new Exception($"Could not find {installationVersionString} in {configurationFile}");
+                if (String.IsNullOrEmpty(sku))
+                    throw new Exception($"Could not find {skuString} in {configurationFile}");
                 vsData = new VSData
                 {
                     InstallationId = installationId,
                     InstallationChannel = installationChannel.Trim('"'),
                     InstallationVersion = installationVersion.Trim('"'),
+                    SKU = sku,
                     MajorVersion = installationVersion.Trim('"').Split('.').First(),
                 };
                 PathToDataMap[path] = vsData;

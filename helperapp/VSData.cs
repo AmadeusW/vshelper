@@ -11,6 +11,7 @@ namespace helperapp
         public string InstallationId;
         public string InstallationChannel;
         public string InstallationVersion;
+        public string SKU;
         public string MajorVersion;
     }
 }

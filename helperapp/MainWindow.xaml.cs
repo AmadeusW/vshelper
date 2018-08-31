@@ -99,8 +99,9 @@ namespace helperapp
         private static void UpdateUI(VSData data, string arguments, string path)
         {
             var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.ToLower().StartsWith("rootsuffix"))?.Substring("rootsuffix".Length + 1);
-            AppWindow.Status.Text = data.InstallationChannel + " " + rootSuffix;
+            AppWindow.Status.Text = $"{data.InstallationChannel} {data.SKU} {rootSuffix}";
             AppWindow.Version.Text = data.InstallationVersion;
+            AppWindow.Title = $"VS Helper - {data.InstallationChannel} {rootSuffix}";
             AppWindow.RecentData = data;
             AppWindow.RecentPath = path;
             AppWindow.RecentHive = rootSuffix;
