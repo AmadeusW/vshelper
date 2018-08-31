@@ -23,10 +23,10 @@ namespace helperapp
                 var directory = Path.GetDirectoryName(path);
                 var configurationFile = Path.Combine(directory, "devenv.isolation.ini");
 
-                string installationId = String.Empty;
-                string installationChannel = String.Empty;
-                string installationVersion = String.Empty;
-                string sku = String.Empty;
+                string installationId = string.Empty;
+                string installationChannel = string.Empty;
+                string installationVersion = string.Empty;
+                string sku = string.Empty;
                 foreach (var line in File.ReadAllLines(configurationFile))
                 {
                     if (line.StartsWith(installationIdString))
@@ -46,13 +46,13 @@ namespace helperapp
                         sku = line.Substring(line.IndexOf('=') + 1);
                     }
                 }
-                if (String.IsNullOrEmpty(installationId))
+                if (string.IsNullOrEmpty(installationId))
                     throw new Exception($"Could not find {installationIdString} in {configurationFile}");
-                if (String.IsNullOrEmpty(installationChannel))
+                if (string.IsNullOrEmpty(installationChannel))
                     throw new Exception($"Could not find {installationChannelString} in {configurationFile}");
-                if (String.IsNullOrEmpty(installationVersion))
+                if (string.IsNullOrEmpty(installationVersion))
                     throw new Exception($"Could not find {installationVersionString} in {configurationFile}");
-                if (String.IsNullOrEmpty(sku))
+                if (string.IsNullOrEmpty(sku))
                     throw new Exception($"Could not find {skuString} in {configurationFile}");
                 vsData = new VSData
                 {
