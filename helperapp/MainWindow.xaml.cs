@@ -36,7 +36,7 @@ namespace helperapp
         private static MainWindow AppWindow;
         private User32.SafeEventHookHandle Hook;
 
-        public string RecentId { get; private set; }
+        public VSData RecentData { get; private set; }
         public string RecentPath { get; private set; }
         public string RecentHive { get; private set; }
 
@@ -99,9 +99,10 @@ namespace helperapp
         private static void UpdateUI(VSData data, string arguments, string path)
         {
             var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.ToLower().StartsWith("rootsuffix"))?.Substring("rootsuffix".Length + 1);
-            AppWindow.Status.Text = data.InstallationChannel + " " + rootSuffix;
+            AppWindow.Status.Text = $"{data.InstallationChannel} {data.SKU} {rootSuffix}";
             AppWindow.Version.Text = data.InstallationVersion;
-            AppWindow.RecentId = data.InstallationId;
+            AppWindow.Title = $"VS Helper - {data.InstallationChannel} {rootSuffix}";
+            AppWindow.RecentData = data;
             AppWindow.RecentPath = path;
             AppWindow.RecentHive = rootSuffix;
             AppWindow.AllUI.Visibility = Visibility.Visible;
@@ -111,7 +112,7 @@ namespace helperapp
         {
             try
             {
-                var mefPath = DevenvAnalyzer.GetMefErrorsPath(RecentId, RecentHive);
+                var mefPath = DevenvAnalyzer.GetMefErrorsPath(RecentData, RecentHive);
                 Process.Start(mefPath);
             }
             catch(Exception ex)
@@ -124,7 +125,7 @@ namespace helperapp
         {
             try
             {
-                var activityLogPath = DevenvAnalyzer.GetActivityLogPath(RecentId, RecentHive);
+                var activityLogPath = DevenvAnalyzer.GetActivityLogPath(RecentData, RecentHive);
                 Process.Start(activityLogPath);
             }
             catch (Exception ex)
@@ -137,7 +138,7 @@ namespace helperapp
         {
             try
             {
-                var (commandLinePath, args) = DevenvAnalyzer.GetCommandLinePathAndArgs(RecentId, RecentPath, RecentHive);
+                var (commandLinePath, args) = DevenvAnalyzer.GetCommandLinePathAndArgs(RecentData, RecentPath, RecentHive);
                 Process.Start(commandLinePath, args);
             }
             catch (Exception ex)
@@ -163,7 +164,7 @@ namespace helperapp
         {
             try
             {
-                var extensionPath = DevenvAnalyzer.GetExtensionPath(RecentId, RecentHive);
+                var extensionPath = DevenvAnalyzer.GetExtensionPath(RecentData, RecentHive);
                 Process.Start(extensionPath);
             }
             catch (Exception ex)

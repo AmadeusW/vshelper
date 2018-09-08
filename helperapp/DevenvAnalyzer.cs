@@ -7,19 +7,13 @@ using System.Threading.Tasks;
 
 namespace helperapp
 {
-    struct VSData
-    {
-        public string InstallationId;
-        public string InstallationChannel;
-        public string InstallationVersion;
-    }
-
     static class DevenvAnalyzer
     {
         static Dictionary<string, VSData> PathToDataMap = new Dictionary<string, VSData>();
         const string installationIdString = "InstallationID";
         const string installationChannelString = "ChannelTitle";
         const string installationVersionString = "DisplayVersion";
+        const string skuString = "SKU";
 
         public static VSData GetVsId(string path)
         {
@@ -29,9 +23,10 @@ namespace helperapp
                 var directory = Path.GetDirectoryName(path);
                 var configurationFile = Path.Combine(directory, "devenv.isolation.ini");
 
-                string installationId = String.Empty;
-                string installationChannel = String.Empty;
-                string installationVersion = String.Empty;
+                string installationId = string.Empty;
+                string installationChannel = string.Empty;
+                string installationVersion = string.Empty;
+                string sku = string.Empty;
                 foreach (var line in File.ReadAllLines(configurationFile))
                 {
                     if (line.StartsWith(installationIdString))
@@ -46,35 +41,42 @@ namespace helperapp
                     {
                         installationVersion = line.Substring(line.IndexOf('=') + 1);
                     }
-
+                    if (line.StartsWith(skuString))
+                    {
+                        sku = line.Substring(line.IndexOf('=') + 1);
+                    }
                 }
-                if (String.IsNullOrEmpty(installationId))
+                if (string.IsNullOrEmpty(installationId))
                     throw new Exception($"Could not find {installationIdString} in {configurationFile}");
-                if (String.IsNullOrEmpty(installationChannel))
-                    throw new Exception($"Could not find {installationChannel} in {configurationFile}");
-                if (String.IsNullOrEmpty(installationVersion))
-                    throw new Exception($"Could not find {installationVersion} in {configurationFile}");
+                if (string.IsNullOrEmpty(installationChannel))
+                    throw new Exception($"Could not find {installationChannelString} in {configurationFile}");
+                if (string.IsNullOrEmpty(installationVersion))
+                    throw new Exception($"Could not find {installationVersionString} in {configurationFile}");
+                if (string.IsNullOrEmpty(sku))
+                    throw new Exception($"Could not find {skuString} in {configurationFile}");
                 vsData = new VSData
                 {
                     InstallationId = installationId,
                     InstallationChannel = installationChannel.Trim('"'),
                     InstallationVersion = installationVersion.Trim('"'),
+                    SKU = sku,
+                    MajorVersion = installationVersion.Trim('"').Split('.').First(),
                 };
                 PathToDataMap[path] = vsData;
             }
             return vsData;
         }
 
-        internal static string GetMefErrorsPath(string id, string hive)
+        internal static string GetMefErrorsPath(VSData data, string hive)
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Microsoft\\VisualStudio\\15.0_" + id + hive,
+                $"Microsoft\\VisualStudio\\{data.MajorVersion}.0_{data.InstallationId}{hive}",
                 "ComponentModelCache",
                 "Microsoft.VisualStudio.Default.err");
         }
 
-        internal static (string, string) GetCommandLinePathAndArgs(string id, string path, string hive)
+        internal static (string, string) GetCommandLinePathAndArgs(VSData data, string path, string hive)
         {
             var cmdPath = Environment.ExpandEnvironmentVariables("%comspec%");
             var args = "/k \"" + Path.Combine(
@@ -85,11 +87,11 @@ namespace helperapp
             return (cmdPath, args);
         }
 
-        internal static string GetActivityLogPath(string id, string hive)
+        internal static string GetActivityLogPath(VSData data, string hive)
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Microsoft\\VisualStudio\\15.0_" + id + hive,
+                $"Microsoft\\VisualStudio\\{data.MajorVersion}.0_{data.InstallationId}{hive}",
                 "ActivityLog.xml");
         }
 
@@ -98,11 +100,11 @@ namespace helperapp
             return Path.GetDirectoryName(path);
         }
 
-        internal static string GetExtensionPath(string id, string hive)
+        internal static string GetExtensionPath(VSData data, string hive)
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Microsoft\\VisualStudio\\15.0_" + id + hive,
+                $"Microsoft\\VisualStudio\\{data.MajorVersion}.0_{data.InstallationId}{hive}",
                 "Extensions");
         }
     }
