@@ -104,7 +104,7 @@ namespace helperapp
             AppWindow.Title = $"VS Helper - {data.InstallationChannel} {rootSuffix}";
             AppWindow.RecentData = data;
             AppWindow.RecentPath = path;
-            AppWindow.RecentHive = rootSuffix;
+            AppWindow.RecentHive = rootSuffix.Trim();
             AppWindow.AllUI.Visibility = Visibility.Visible;
         }
 
