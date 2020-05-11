@@ -15,7 +15,7 @@ namespace helperapp
         const string installationVersionString = "DisplayVersion";
         const string skuString = "SKU";
 
-        public static VSData GetVsId(string path)
+        public static VSData GetVsData(string path, string arguments)
         {
             VSData vsData;
             if (!PathToDataMap.TryGetValue(path, out vsData))
@@ -54,6 +54,10 @@ namespace helperapp
                     throw new Exception($"Could not find {installationVersionString} in {configurationFile}");
                 if (string.IsNullOrEmpty(sku))
                     throw new Exception($"Could not find {skuString} in {configurationFile}");
+
+                var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.ToLower().StartsWith("rootsuffix"))?.Substring("rootsuffix".Length + 1) ?? string.Empty;
+                var rootFolder = path.Split('\\').Reverse().Skip(3).FirstOrDefault() ?? string.Empty;
+
                 vsData = new VSData
                 {
                     InstallationId = installationId,
@@ -61,6 +65,9 @@ namespace helperapp
                     InstallationVersion = installationVersion.Trim('"'),
                     SKU = sku,
                     MajorVersion = installationVersion.Trim('"').Split('.').First(),
+                    Hive = rootSuffix,
+                    RootFolderName = rootFolder,
+                    Path = path
                 };
                 PathToDataMap[path] = vsData;
             }

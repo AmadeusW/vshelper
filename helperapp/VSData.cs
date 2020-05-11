@@ -13,5 +13,8 @@ namespace helperapp
         public string InstallationVersion;
         public string SKU;
         public string MajorVersion;
+        public string Path;
+        public string Hive;
+        public string RootFolderName;
     }
 }

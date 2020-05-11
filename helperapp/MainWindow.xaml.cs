@@ -80,13 +80,13 @@ namespace helperapp
 
                     foreach (ManagementObject o in searcher.Get())
                     {
-                        if (o["Name"].ToString() != "devenv.exe")
+                        if (o["Name"].ToString() != "devenv.exe" || o["ExecutablePath"] == null)
                         {
                             return;
                         }
 
-                        var id = DevenvAnalyzer.GetVsId(o["ExecutablePath"].ToString());
-                        UpdateUI(id, o["CommandLine"].ToString(), o["ExecutablePath"].ToString());
+                        var data = DevenvAnalyzer.GetVsData(o["ExecutablePath"].ToString(), o["CommandLine"].ToString());
+                        UpdateUI(data);
                     }
                 }
             }
@@ -96,15 +96,14 @@ namespace helperapp
             }
         }
 
-        private static void UpdateUI(VSData data, string arguments, string path)
+        private static void UpdateUI(VSData data)
         {
-            var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.ToLower().StartsWith("rootsuffix"))?.Substring("rootsuffix".Length + 1);
-            AppWindow.Status.Text = $"{data.InstallationChannel} {data.SKU} {rootSuffix}";
+            AppWindow.Status.Text = $"{data.InstallationChannel} {data.SKU} {data.Hive}";
             AppWindow.Version.Text = data.InstallationVersion;
-            AppWindow.Title = $"VS Helper - {data.InstallationChannel} {rootSuffix}";
+            AppWindow.Title = $"VS Helper - {data.InstallationChannel} {data.Hive}";
             AppWindow.RecentData = data;
-            AppWindow.RecentPath = path;
-            AppWindow.RecentHive = rootSuffix?.Trim() ?? string.Empty;
+            AppWindow.RecentPath = data.Path;
+            AppWindow.RecentHive = data.Hive?.Trim() ?? string.Empty;
             AppWindow.AllUI.Visibility = Visibility.Visible;
         }
 
