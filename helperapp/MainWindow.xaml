@@ -18,28 +18,18 @@
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
         <Style TargetType="{x:Type Button}">
-            <Setter Property="Height" Value="40"></Setter>
-            <Setter Property="Width" Value="60"></Setter>
+            <Setter Property="Padding" Value="2"></Setter>
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
     </Window.Resources>
-    <StackPanel Orientation="Vertical">
+    <WrapPanel Orientation="Horizontal">
         <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}" MinWidth="230" Margin="5 5 5 0">Use Visual Studio to get started</TextBlock>
-        <TextBlock Name="Version" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Version, Path=Text}" MinWidth="230" Margin="5 0 5 5"></TextBlock>
         <WrapPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed">
-            <Button Click="OnMefClick">
-                <TextBlock>MEF<LineBreak/>Errors</TextBlock>
-            </Button>
-            <Button Click="OnActivityLogClick">
-                <TextBlock>Activity<LineBreak/>Log</TextBlock>
-            </Button>
-            <Button Click="OnCommandPromptClick">CMD</Button>
-            <Button Click="OnExtensionsClick">
-                <TextBlock>Extension<LineBreak/>DIR</TextBlock>
-            </Button>
-            <Button Click="OnInstallLocationClick">
-                <TextBlock>Installation<LineBreak/>DIR</TextBlock>
-            </Button>
+            <Button Click="OnMefClick" ToolTip="MEF Errors">mef</Button>
+            <Button Click="OnActivityLogClick" ToolTip="Activity Log">log</Button>
+            <Button Click="OnCommandPromptClick" ToolTip="Developer command prompt">cmd</Button>
+            <Button Click="OnExtensionsClick" ToolTip="Extensions directory">ext</Button>
+            <Button Click="OnInstallLocationClick" ToolTip="Installation directory">dir</Button>
         </WrapPanel>
-    </StackPanel>
+    </WrapPanel>
 </Window>

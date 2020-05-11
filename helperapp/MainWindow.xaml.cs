@@ -99,7 +99,7 @@ namespace helperapp
         private static void UpdateUI(VSData data)
         {
             AppWindow.Status.Text = $"{data.InstallationChannel} {data.SKU} {data.Hive}";
-            AppWindow.Version.Text = data.InstallationVersion;
+            //AppWindow.Version.Text = data.InstallationVersion;
             AppWindow.Title = $"VS Helper - {data.InstallationChannel} {data.Hive}";
             AppWindow.RecentData = data;
             AppWindow.RecentPath = data.Path;
