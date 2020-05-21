@@ -177,5 +177,11 @@ namespace helperapp
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
+
+        private void OnMoreClick(object sender, RoutedEventArgs e)
+        {
+            var uiElement = sender as Control;
+            uiElement.ContextMenu.IsOpen = true;
+        }
     }
 }

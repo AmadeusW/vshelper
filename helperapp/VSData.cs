@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace helperapp
 {
-    public struct VSData
+    public class VSData
     {
         public string InstallationId;
         public string InstallationChannel;
