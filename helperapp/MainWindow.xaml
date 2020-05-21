@@ -21,7 +21,7 @@
             <Setter Property="Padding" Value="2"></Setter>
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
-   <!--     <local:MenuPrefixConverter x:Key="MenuPrefix" />-->
+        <local:MenuPrefixConverter x:Key="MenuPrefix" />
     </Window.Resources>
     <WrapPanel Orientation="Horizontal">
         <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}" MinWidth="230" Margin="5 5 5 0">Use Visual Studio to get started</TextBlock>
@@ -35,15 +35,15 @@
                 <TextBlock>...</TextBlock>
                 <Button.ContextMenu>
                     <ContextMenu>
-        <!--                <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationId}" Header="{Binding InstallationId, Converter={StaticResource.MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-           -->             <Separator />
+                        <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationId}" Header="{Binding InstallationId, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
+                        <Separator />
                         <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
                         <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
                         <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
                         <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
                         <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
                         <Separator />
-                        <MenuItem>Exit</MenuItem>
+                        <MenuItem Header="Exit" />
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>
