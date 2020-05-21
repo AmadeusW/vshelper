@@ -181,7 +181,8 @@ namespace helperapp
         private void OnMoreClick(object sender, RoutedEventArgs e)
         {
             var uiElement = sender as Control;
-            uiElement.ContextMenu.IsOpen = true;
+            if (uiElement?.ContextMenu != null)
+                uiElement.ContextMenu.IsOpen = true;
         }
     }
 }
