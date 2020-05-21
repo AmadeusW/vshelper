@@ -118,7 +118,7 @@ namespace helperapp
         {
             AppWindow.CurrentViewModel.Data = data;
             AppWindow.AllUI.Visibility = Visibility.Visible;
-            AppWindow.Status.Text = $"{data.InstallationChannel} {data.SKU} {data.Hive}";
+            //AppWindow.Status.Text = $"{data.InstallationChannel} {data.SKU} {data.Hive}";
             /*
             //AppWindow.Version.Text = data.InstallationVersion;
             AppWindow.Title = $"VS Helper - {data.InstallationChannel} {data.Hive}";

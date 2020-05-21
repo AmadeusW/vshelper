@@ -31,7 +31,7 @@ namespace helperapp
     {
         public List<OperationViewModel> Operations { get; }
 
-        public string Header { get; set; }
+        public string Header { get; set; } = "Use Visual Studio to get started";
 
         private VSData _data;
         public VSData Data { get { return this._data; } set { this._data = value; UpdateHeader(); } }

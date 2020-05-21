@@ -24,7 +24,14 @@
         <local:MenuPrefixConverter x:Key="MenuPrefix" />
     </Window.Resources>
     <WrapPanel Orientation="Horizontal">
-        <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}" MinWidth="230" Margin="5 5 5 0">Use Visual Studio to get started</TextBlock>
+        <TextBlock 
+            Name="Status" 
+            Style="{StaticResource ResourceKey=Header}" 
+            ToolTip="{Binding Path=Header}" 
+            MinWidth="230" 
+            Margin="5 5 5 0"
+            Text="{Binding Path=Header}"
+        />
         <ItemsControl ItemsSource="{Binding Operations}" Name="AllUI" Visibility="Collapsed">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -56,6 +63,13 @@
             <Button.ContextMenu>
                 <ContextMenu>
                     <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationId}" Header="{Binding InstallationId, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationChannel}" Header="{Binding InstallationChannel, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationVersion}" Header="{Binding InstallationVersion, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowSKU}" Header="{Binding SKU, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMajorVersion}" Header="{Binding MajorVersion, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowPath}" Header="{Binding Path, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowHive}" Header="{Binding Hive, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowRootFolderName}" Header="{Binding RootFolderName, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
                     <Separator />
                     <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
                     <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
