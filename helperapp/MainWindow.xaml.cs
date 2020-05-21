@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using PInvoke;
 using System.Management;
+using System.Runtime.CompilerServices;
 
 namespace helperapp
 {
@@ -39,19 +40,36 @@ namespace helperapp
         public VSData RecentData { get; private set; }
         public string RecentPath { get; private set; }
         public string RecentHive { get; private set; }
+        private OperationsViewModel CurrentViewModel { get; set; }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                Listener = new WinEventProc(target);
-                var functionPointer = Marshal.GetFunctionPointerForDelegate(Listener);
-                Hook = User32.SetWinEventHook(User32.WindowsEventHookType.EVENT_SYSTEM_FOREGROUND, User32.WindowsEventHookType.EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, functionPointer, 0, 0, User32.WindowsEventHookFlags.WINEVENT_OUTOFCONTEXT);
+                InitializeUi();
+                InitializeHook();
             }
             catch (Exception ex)
             {
                 AppWindow.Status.Text = ex.Message;
             }
+        }
+
+        private void InitializeUi()
+        {
+            List<Operation> operations = new List<Operation>();
+            operations.Add(new Operation() { FullName = "Test A", ShortName = "A" });
+            operations.Add(new Operation() { FullName = "Test B", ShortName = "B" });
+            operations.Add(new Operation() { FullName = "Test C", ShortName = "C" });
+            this.CurrentViewModel = new OperationsViewModel(operations);
+            this.DataContext = this.CurrentViewModel;
+        }
+
+        private void InitializeHook()
+        {
+            Listener = new WinEventProc(target);
+            var functionPointer = Marshal.GetFunctionPointerForDelegate(Listener);
+            Hook = User32.SetWinEventHook(User32.WindowsEventHookType.EVENT_SYSTEM_FOREGROUND, User32.WindowsEventHookType.EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, functionPointer, 0, 0, User32.WindowsEventHookFlags.WINEVENT_OUTOFCONTEXT);
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -98,13 +116,16 @@ namespace helperapp
 
         private static void UpdateUI(VSData data)
         {
+            AppWindow.CurrentViewModel.Data = data;
+            AppWindow.AllUI.Visibility = Visibility.Visible;
             AppWindow.Status.Text = $"{data.InstallationChannel} {data.SKU} {data.Hive}";
+            /*
             //AppWindow.Version.Text = data.InstallationVersion;
             AppWindow.Title = $"VS Helper - {data.InstallationChannel} {data.Hive}";
             AppWindow.RecentData = data;
             AppWindow.RecentPath = data.Path;
             AppWindow.RecentHive = data.Hive?.Trim() ?? string.Empty;
-            AppWindow.AllUI.Visibility = Visibility.Visible;
+            */
         }
 
         private void OnMefClick(object sender, RoutedEventArgs e)

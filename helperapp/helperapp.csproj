@@ -50,9 +50,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -74,8 +71,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Operation.cs" />
     <Compile Include="UiConverters.cs" />
     <Compile Include="VSData.cs" />
+    <Compile Include="OperationsViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -25,28 +25,47 @@
     </Window.Resources>
     <WrapPanel Orientation="Horizontal">
         <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}" MinWidth="230" Margin="5 5 5 0">Use Visual Studio to get started</TextBlock>
-        <WrapPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed">
+        <ItemsControl ItemsSource="{Binding Operations}" Name="AllUI" Visibility="Collapsed">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                        Content="{Binding ShortName}"
+                        ToolTip="{Binding FullName}"
+                        Command="{Binding Command}"
+                        Visibility="{Binding Visible}"
+                        />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        <!--
+        <WrapPanel Orientation="Horizontal"  >
             <Button Click="OnMefClick" ToolTip="MEF Errors">mef</Button>
             <Button Click="OnActivityLogClick" ToolTip="Activity Log">log</Button>
             <Button Click="OnCommandPromptClick" ToolTip="Developer command prompt">cmd</Button>
             <Button Click="OnExtensionsClick" ToolTip="Extensions directory">extfds</Button>
             <Button Click="OnInstallLocationClick" ToolTip="Installation directory">dir</Button>
-            <Button Click="OnMoreClick" ToolTip="Main menu">
-                <TextBlock>...</TextBlock>
-                <Button.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationId}" Header="{Binding InstallationId, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-                        <Separator />
-                        <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                        <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                        <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                        <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                        <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                        <Separator />
-                        <MenuItem Header="Exit" />
-                    </ContextMenu>
-                </Button.ContextMenu>
-            </Button>
         </WrapPanel>
+        -->
+        <Button Click="OnMoreClick" ToolTip="Main menu">
+            <TextBlock>...</TextBlock>
+            <Button.ContextMenu>
+                <ContextMenu>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationId}" Header="{Binding InstallationId, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
+                    <Separator />
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
+                    <Separator />
+                    <MenuItem Header="Exit" />
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>
     </WrapPanel>
 </Window>
