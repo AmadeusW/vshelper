@@ -10,6 +10,7 @@ namespace helperapp
     {
         public string FullName { get; internal set; }
         public string ShortName { get; internal set; }
-        public string Format { get; internal set; }
+        public string Path { get; internal set; }
+        public string Arguments { get; internal set; }
     }
 }
