@@ -18,6 +18,7 @@ using System.Windows.Threading;
 using PInvoke;
 using System.Management;
 using System.Runtime.CompilerServices;
+using System.Windows.Media.Animation;
 
 namespace helperapp
 {

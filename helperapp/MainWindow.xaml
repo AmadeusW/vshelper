@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:helperapp"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
         Title="VS Helper" 
         SizeToContent="WidthAndHeight"
@@ -11,6 +12,7 @@
         WindowStyle="None"
         Topmost="True"
         Closed="Window_Closed" MouseDown="Window_MouseDown"
+        Name="WindowName"
         >
     <Window.Resources>
         <Style TargetType="{x:Type TextBlock}" x:Key="Header">
@@ -21,65 +23,63 @@
             <Setter Property="Padding" Value="2"></Setter>
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
-        <local:MenuPrefixConverter x:Key="MenuPrefix" />
+        <local:PrefixConverter x:Key="Prefix" />
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
     </Window.Resources>
-    <WrapPanel Orientation="Horizontal">
-        <TextBlock 
-            Name="Status" 
-            Style="{StaticResource ResourceKey=Header}" 
-            ToolTip="{Binding Path=Header}" 
-            MinWidth="230" 
-            Margin="5 5 5 0"
-            Text="{Binding Path=Header}"
-        />
-        <ItemsControl ItemsSource="{Binding Operations}" Name="AllUI" Visibility="Collapsed">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button
-                        Content="{Binding ShortName}"
-                        ToolTip="{Binding FullName}"
-                        Command="{Binding Command}"
-                        Visibility="{Binding Visible}"
-                        />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-        <!--
-        <WrapPanel Orientation="Horizontal"  >
-            <Button Click="OnMefClick" ToolTip="MEF Errors">mef</Button>
-            <Button Click="OnActivityLogClick" ToolTip="Activity Log">log</Button>
-            <Button Click="OnCommandPromptClick" ToolTip="Developer command prompt">cmd</Button>
-            <Button Click="OnExtensionsClick" ToolTip="Extensions directory">extfds</Button>
-            <Button Click="OnInstallLocationClick" ToolTip="Installation directory">dir</Button>
+
+    <StackPanel Orientation="Vertical">
+        <WrapPanel Orientation="Horizontal">
+            <TextBlock 
+                Name="Status" 
+                Style="{StaticResource ResourceKey=Header}" 
+                ToolTip="{Binding Path=Header}" 
+                MinWidth="230" 
+                Margin="5 5 5 0"
+                Text="{Binding Path=Header}"
+            />
+            <ItemsControl ItemsSource="{Binding Operations}" Name="AllUI" Visibility="Collapsed">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button
+                            Content="{Binding ShortName}"
+                            ToolTip="{Binding FullName}"
+                            Command="{Binding Command}"
+                            Visibility="{Binding Visible}"
+                            />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+            <!--
+            <WrapPanel Orientation="Horizontal"  >
+                <Button Click="OnMefClick" ToolTip="MEF Errors">mef</Button>
+                <Button Click="OnActivityLogClick" ToolTip="Activity Log">log</Button>
+                <Button Click="OnCommandPromptClick" ToolTip="Developer command prompt">cmd</Button>
+                <Button Click="OnExtensionsClick" ToolTip="Extensions directory">extfds</Button>
+                <Button Click="OnInstallLocationClick" ToolTip="Installation directory">dir</Button>
+            </WrapPanel>
+            -->
+            <ToggleButton IsChecked="{Binding ShowConfiguration}" Content="🔧"/>
         </WrapPanel>
-        -->
-        <Button Click="OnMoreClick" ToolTip="Main menu">
-            <TextBlock>...</TextBlock>
-            <Button.ContextMenu>
-                <ContextMenu>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationId}" Header="{Binding InstallationId, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationChannel}" Header="{Binding InstallationChannel, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowInstallationVersion}" Header="{Binding InstallationVersion, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowSKU}" Header="{Binding SKU, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMajorVersion}" Header="{Binding MajorVersion, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowPath}" Header="{Binding Path, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowHive}" Header="{Binding Hive, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowRootFolderName}" Header="{Binding RootFolderName, Converter={StaticResource MenuPrefix}, ConverterParameter=Show}"></MenuItem>
-                    <Separator />
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                    <MenuItem IsCheckable="True" IsChecked="{Binding ShowMefErrorLog}">MEF error log</MenuItem>
-                    <Separator />
-                    <MenuItem Header="Exit" />
-                </ContextMenu>
-            </Button.ContextMenu>
-        </Button>
-    </WrapPanel>
+
+        <StackPanel Visibility="{Binding ShowConfiguration, Converter={StaticResource BooleanToVisibility}}" Orientation="Vertical">
+            <TextBlock Text="Show:" />
+            <CheckBox IsChecked="{Binding ShowInstallationId}" Content="{Binding InstallationId, Converter={StaticResource Prefix}, ConverterParameter='Id'}" />
+            <CheckBox IsChecked="{Binding ShowInstallationChannel}" Content="{Binding InstallationChannel, Converter={StaticResource Prefix}, ConverterParameter='Channel'}" />
+            <CheckBox IsChecked="{Binding ShowInstallationVersion}" Content="{Binding InstallationVersion, Converter={StaticResource Prefix}, ConverterParameter='Version'}" />
+            <CheckBox IsChecked="{Binding ShowSKU}" Content="{Binding SKU, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
+            <CheckBox IsChecked="{Binding ShowMajorVersion}" Content="{Binding MajorVersion, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
+            <CheckBox IsChecked="{Binding ShowPath}" Content="{Binding Path, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
+            <CheckBox IsChecked="{Binding ShowHive}" Content="{Binding Hive, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
+            <CheckBox IsChecked="{Binding ShowRootFolderName}" Content="{Binding RootFolderName, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
+            <TextBlock Text="Operations:" />
+            <CheckBox IsChecked="{Binding ShowMefErrorLog}" Content="MEF Error Log" />
+            <CheckBox IsChecked="{Binding ShowMefErrorLog}" Content="Activity Log" />
+        </StackPanel>
+    </StackPanel>
+
 </Window>

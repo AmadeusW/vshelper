@@ -33,8 +33,11 @@ namespace helperapp
 
         public string Header { get; set; } = "Use Visual Studio to get started";
 
-        private VSData _data;
-        public VSData Data { get { return this._data; } set { this._data = value; UpdateHeader(); } }
+        private VSData data;
+        public VSData Data { get { return this.data; } set { this.data = value; UpdateHeader(); NotifyPropertyChanged(""); } }
+
+        private bool showConfiguration;
+        public bool ShowConfiguration { get { return this.showConfiguration; } set { this.showConfiguration = value; NotifyPropertyChanged(); } }
 
         private void UpdateHeader()
         {
@@ -48,7 +51,7 @@ namespace helperapp
             ConditionalAppend(ShowHive, Hive);
             ConditionalAppend(ShowRootFolderName, RootFolderName);
             this.Header = sb.ToString();
-            NotifyPropertyChanged(nameof(Header));
+            //NotifyPropertyChanged(nameof(Header));
 
             void ConditionalAppend(bool condition, string value)
             {
@@ -76,14 +79,14 @@ namespace helperapp
         public string Hive => this.Data?.Hive ?? string.Empty;
         public string RootFolderName => this.Data?.RootFolderName ?? string.Empty;
 
-        public bool ShowInstallationId { get { return this._showInstallationId; } set { this._showInstallationId = value; NotifyPropertyChanged(); } }
-        public bool ShowInstallationChannel { get { return this._showInstallationChannel; } set { this._showInstallationChannel = value; NotifyPropertyChanged(); } }
-        public bool ShowInstallationVersion { get { return this._showInstallationVersion; } set { this._showInstallationVersion = value; NotifyPropertyChanged(); } }
-        public bool ShowSKU { get { return this._showSKU; } set { this._showSKU = value; NotifyPropertyChanged(); } }
-        public bool ShowMajorVersion { get { return this._showMajorVersion; } set { this._showMajorVersion = value; NotifyPropertyChanged(); } }
-        public bool ShowPath { get { return this._showPath; } set { this._showPath = value; NotifyPropertyChanged(); } }
-        public bool ShowHive { get { return this._showHive; } set { this._showHive = value; NotifyPropertyChanged(); } }
-        public bool ShowRootFolderName { get { return this._showRootFolderName; } set { this._showRootFolderName = value; NotifyPropertyChanged(); } }
+        public bool ShowInstallationId { get { return this._showInstallationId; } set { this._showInstallationId = value; UpdateHeader(); } }
+        public bool ShowInstallationChannel { get { return this._showInstallationChannel; } set { this._showInstallationChannel = value; UpdateHeader(); } }
+        public bool ShowInstallationVersion { get { return this._showInstallationVersion; } set { this._showInstallationVersion = value; UpdateHeader(); } }
+        public bool ShowSKU { get { return this._showSKU; } set { this._showSKU = value; UpdateHeader(); } }
+        public bool ShowMajorVersion { get { return this._showMajorVersion; } set { this._showMajorVersion = value; UpdateHeader(); } }
+        public bool ShowPath { get { return this._showPath; } set { this._showPath = value; UpdateHeader(); } }
+        public bool ShowHive { get { return this._showHive; } set { this._showHive = value; UpdateHeader(); } }
+        public bool ShowRootFolderName { get { return this._showRootFolderName; } set { this._showRootFolderName = value; UpdateHeader(); } }
 
         private bool _showInstallationId = true;
         private bool _showInstallationChannel;

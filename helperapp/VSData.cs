@@ -8,8 +8,8 @@ namespace helperapp
 {
     public class VSData
     {
-        public string InstallationId;
         public string InstallationChannel;
+        public string InstallationId;
         public string InstallationVersion;
         public string SKU;
         public string MajorVersion;
