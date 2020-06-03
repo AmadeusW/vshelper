@@ -11,42 +11,69 @@ using VSData = System.Collections.Generic.Dictionary<string, string>;
 
 namespace helperapp
 {
-    public class OperationViewModel : NotifyPropertyChangedBase
+    public class OperationViewModel : ViewModelWithPersistingDisplay
     {
         public string FullName => operation.FullName;
         public string ShortName => operation.ShortName;
-        public bool Active { get { return this.active; } set { this.active = value; NotifyPropertyChanged(); } }
         public ICommand Command { get; set; }
 
-        private bool active = true;
         private Operation operation;
 
-        public OperationViewModel(Operation operation)
+        public OperationViewModel(Operation operation, IDictionary<string, bool> displayPreference)
+            : base(operation.FullName, displayPreference)
         {
             this.operation = operation;
-            // TODO: set up Command
         }
     }
 
-    public class PropertyViewModel : NotifyPropertyChangedBase
+    public class PropertyViewModel : ViewModelWithPersistingDisplay
+    {
+        public string Value { get; }
+
+        public PropertyViewModel(string key, string value, IDictionary<string, bool> displayPreference)
+            : base(key, displayPreference)
+        {
+            this.Value = value;
+        }
+    }
+
+    public class ViewModelWithPersistingDisplay : NotifyPropertyChangedBase
     {
         public string Key { get; }
-        public string Value { get; }
-        public bool Active { get { return this.active; } set { this.active = value; NotifyPropertyChanged(); } }
+        public bool Active
+        {
+            get => this.active;
+            set
+            {
+                this.active = value;
+                DisplayPreference[Key] = value;
+                NotifyPropertyChanged();
+            }
+        }
 
-        private bool active = true;
+        private bool active;
+        private IDictionary<string, bool> DisplayPreference;
 
-        public PropertyViewModel(string key, string value)
+        protected ViewModelWithPersistingDisplay(string key, IDictionary<string, bool> displayPreference)
         {
             this.Key = key;
-            this.Value = value;
-            this.active = true;
+            this.DisplayPreference = displayPreference;
+            bool preference = false;
+            if (displayPreference.TryGetValue(key, out preference) == true)
+            {
+                this.active = preference;
+            }
+            else
+            {
+                this.active = false;
+            }
         }
     }
 
     public class OperationsViewModel : NotifyPropertyChangedBase
     {
-        public List<OperationViewModel> Operations { get; }
+        public IList<OperationViewModel> Operations { get; }
+        public IDictionary<string, bool> DisplayPreference { get; }
 
         public List<PropertyViewModel> Properties { get; private set; }
 
@@ -60,16 +87,16 @@ namespace helperapp
 
         private void UpdateProperties()
         {
-            Properties = Data.Select(kv => new PropertyViewModel(kv.Key, kv.Value)).ToList();
+            Properties = Data.Select(kv => new PropertyViewModel(kv.Key, kv.Value, DisplayPreference)).ToList();
             NotifyPropertyChanged(nameof(Properties));
         }
 
-        public OperationsViewModel(IEnumerable<Operation> operations)
+        public OperationsViewModel(IEnumerable<Operation> operations, IDictionary<string, bool> displayPreference)
         {
+            DisplayPreference = displayPreference;
             Header = string.Empty;
-            Operations = operations.Select(n => new OperationViewModel(n)).ToList();
+            Operations = operations.Select(n => new OperationViewModel(n, DisplayPreference)).ToList();
             Properties = new List<PropertyViewModel>();
-            // TODO: apply personalization settings from file
         }
     }
 

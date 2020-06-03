@@ -20,6 +20,7 @@ using System.Management;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Animation;
 using VSData = System.Collections.Generic.Dictionary<string, string>;
+using System.IO;
 
 namespace helperapp
 {
@@ -35,6 +36,8 @@ namespace helperapp
         }
 
         public delegate void WinEventProc(IntPtr hWinEventHook, User32.WindowsEventHookType @event, IntPtr hwnd, int idObject, int idChild, int dwEventThread, uint dwmsEventTime);
+
+        private const string VisibleControlsStoragePath = "visible.txt";
         private WinEventProc Listener;
         private static MainWindow AppWindow;
         private User32.SafeEventHookHandle Hook;
@@ -42,6 +45,7 @@ namespace helperapp
         public VSData RecentData { get; private set; }
         public string RecentPath { get; private set; }
         public string RecentHive { get; private set; }
+        public Dictionary<string, bool> DisplayPreference { get; private set; }
         private OperationsViewModel CurrentViewModel { get; set; }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -59,14 +63,20 @@ namespace helperapp
 
         private void InitializeUi()
         {
+            LoadVisibleControls();
             List<Operation> operations = new List<Operation>();
             operations.Add(new Operation() { FullName = "MEF Log", ShortName = "mef" });
             operations.Add(new Operation() { FullName = "Activity Log", ShortName = "act" });
             operations.Add(new Operation() { FullName = "Developer command prompt", ShortName = "cmd" });
             operations.Add(new Operation() { FullName = "Installation directory", ShortName = "dir" });
             operations.Add(new Operation() { FullName = "Extension directory", ShortName = "ext" });
-            this.CurrentViewModel = new OperationsViewModel(operations);
+            this.CurrentViewModel = new OperationsViewModel(operations, this.DisplayPreference);
             this.DataContext = this.CurrentViewModel;
+        }
+
+        private static void UpdateUI(VSData data)
+        {
+            AppWindow.CurrentViewModel.Data = data;
         }
 
         private void InitializeHook()
@@ -79,6 +89,25 @@ namespace helperapp
         private void Window_Closed(object sender, EventArgs e)
         {
             Hook?.Dispose();
+            SaveVisibleControls();
+        }
+
+        private void SaveVisibleControls()
+        {
+            var visibleControls = this.DisplayPreference.Where(kv => kv.Value).Select(kv => kv.Key);
+            File.WriteAllLines(VisibleControlsStoragePath, visibleControls);
+        }
+
+        private void LoadVisibleControls()
+        {
+            this.DisplayPreference = new Dictionary<string, bool>();
+            if (File.Exists(VisibleControlsStoragePath))
+            {
+                foreach (var line in File.ReadAllLines(VisibleControlsStoragePath))
+                {
+                    this.DisplayPreference[line] = true;
+                }
+            }
         }
 
         static void target(IntPtr hWinEventHook, User32.WindowsEventHookType @event, IntPtr hwnd, int idObject, int idChild, int dwEventThread, uint dwmsEventTime)
@@ -116,11 +145,6 @@ namespace helperapp
             {
                 AppWindow.Status.Text = ex.Message;
             }
-        }
-
-        private static void UpdateUI(VSData data)
-        {
-            AppWindow.CurrentViewModel.Data = data;
         }
 
         private void OnMefClick(object sender, RoutedEventArgs e)
