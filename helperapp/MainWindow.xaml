@@ -16,7 +16,7 @@
         >
     <Window.Resources>
         <Style TargetType="{x:Type TextBlock}" x:Key="Header">
-            <Setter Property="Margin" Value="5 0 5 0"></Setter>
+            <Setter Property="Margin" Value="0 0 5 0"></Setter>
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
         <Style TargetType="{x:Type Button}">
@@ -32,14 +32,16 @@
         </Style>
         <local:PrefixConverter x:Key="Prefix" />
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+        <local:StringToVisibilityConverter x:Key="StringToVisibility" />
     </Window.Resources>
 
     <StackPanel Orientation="Vertical" Style="{StaticResource MainPanel}">
-        
+
+        <TextBlock x:Name="Status" Visibility="{Binding Path=Text, ElementName=Status, Converter={StaticResource StringToVisibility}}"/>
+
         <!-- First row: identification and operations -->
         <WrapPanel Orientation="Horizontal">
 
-            <TextBlock x:Name="Status" />
             <ItemsControl ItemsSource="{Binding Properties}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -47,6 +49,7 @@
                             Text="{Binding Value, Mode=OneTime}"
                             ToolTip="{Binding Key, Mode=OneTime}"
                             Visibility="{Binding Active, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}"
+                            Style="{StaticResource Header}"
                             />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -91,7 +94,7 @@
                             >
                             <TextBlock>
                                 <Run Text="{Binding Key, Mode=OneTime}"/>
-                                <Run Text=": " />
+                                <Run Text="-" />
                                 <Run Text="{Binding Value, Mode=OneTime}"/>
                             </TextBlock>
                         </CheckBox>
@@ -110,7 +113,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <CheckBox
-                            Content="{Binding FullName, Converter={StaticResource Prefix}, ConverterParameter=Show, Mode=OneTime}"
+                            Content="{Binding FullName}"
                             IsChecked="{Binding Active, Mode=TwoWay}"
                             ToolTip="{Binding ShortName, Converter={StaticResource Prefix}, ConverterParameter='Select to display as', Mode=OneTime}"
                             />
