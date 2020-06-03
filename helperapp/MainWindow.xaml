@@ -15,13 +15,15 @@
         Name="WindowName"
         >
     <Window.Resources>
-        <Style TargetType="{x:Type TextBlock}" x:Key="Header">
-            <Setter Property="Margin" Value="0 0 5 0"></Setter>
-            <Setter Property="FontSize" Value="11"></Setter>
+        <Style TargetType="{x:Type TextBlock}" x:Key="Identification">
+            <Setter Property="Margin" Value="0 0 2 0"></Setter>
+        </Style>
+        <Style TargetType="{x:Type TextBlock}" x:Key="ConfigurationHeader">
+            <Setter Property="Margin" Value="0 5 0 2"></Setter>
         </Style>
         <Style TargetType="{x:Type Button}">
-            <Setter Property="Padding" Value="2"></Setter>
-            <Setter Property="FontSize" Value="12"></Setter>
+            <Setter Property="Padding" Value="4 2"></Setter>
+            <Setter Property="FontSize" Value="11"></Setter>
         </Style>
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="MaxWidth" Value="200"></Setter>
@@ -42,23 +44,7 @@
         <!-- First row: identification and operations -->
         <WrapPanel Orientation="Horizontal">
 
-            <ItemsControl ItemsSource="{Binding Properties}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock
-                            Text="{Binding Value, Mode=OneTime}"
-                            ToolTip="{Binding Key, Mode=OneTime}"
-                            Visibility="{Binding Active, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}"
-                            Style="{StaticResource Header}"
-                            />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 5 0"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+            <ToggleButton IsChecked="{Binding ShowConfiguration, Mode=TwoWay}" Content="…"/>
 
             <ItemsControl ItemsSource="{Binding Operations}">
                 <ItemsControl.ItemTemplate>
@@ -78,12 +64,28 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
 
-            <ToggleButton IsChecked="{Binding ShowConfiguration, Mode=TwoWay}" Content="🔧"/>
+            <ItemsControl ItemsSource="{Binding Properties}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding Value, Mode=OneTime}"
+                            ToolTip="{Binding Key, Mode=OneTime}"
+                            Visibility="{Binding Active, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}"
+                            Style="{StaticResource Identification}"
+                            />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 5 0"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </WrapPanel>
 
         <!-- Second row: configuration -->
         <StackPanel Visibility="{Binding ShowConfiguration, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}" Orientation="Vertical">
-            <TextBlock Text="Identify:" />
+            <TextBlock Text="Identify:" Style="{StaticResource ConfigurationHeader}" />
 
             <ItemsControl ItemsSource="{Binding Properties, Mode=OneWay}">
                 <ItemsControl.ItemTemplate>
@@ -107,7 +109,7 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
 
-            <TextBlock Text="Operations:" />
+            <TextBlock Text="Operations:" Style="{StaticResource ConfigurationHeader}" />
             
             <ItemsControl ItemsSource="{Binding Operations}">
                 <ItemsControl.ItemTemplate>

@@ -84,6 +84,8 @@ namespace helperapp
                 }
                 else
                 {
+                    AppWindow.Status.Text = string.Empty;
+
                     String[] properties = { "Name", "ExecutablePath", "CommandLine" };
                     SelectQuery s = new SelectQuery("Win32_Process",
                        $"ProcessID = '{processId}' ",
