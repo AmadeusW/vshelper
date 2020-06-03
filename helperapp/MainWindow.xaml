@@ -21,64 +21,108 @@
         </Style>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Padding" Value="2"></Setter>
-            <Setter Property="FontSize" Value="11"></Setter>
+            <Setter Property="FontSize" Value="12"></Setter>
+        </Style>
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="MaxWidth" Value="200"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+        </Style>
+        <Style TargetType="{x:Type StackPanel}" x:Key="MainPanel">
+            <Setter Property="Margin" Value="5"></Setter>
         </Style>
         <local:PrefixConverter x:Key="Prefix" />
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
     </Window.Resources>
 
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" Style="{StaticResource MainPanel}">
+        
+        <!-- First row: identification and operations -->
         <WrapPanel Orientation="Horizontal">
-            <TextBlock 
-                Name="Status" 
-                Style="{StaticResource ResourceKey=Header}" 
-                ToolTip="{Binding Path=Header}" 
-                MinWidth="230" 
-                Margin="5 5 5 0"
-                Text="{Binding Path=Header}"
-            />
-            <ItemsControl ItemsSource="{Binding Operations}" Name="AllUI" Visibility="Collapsed">
+
+            <TextBlock x:Name="Status" />
+            <ItemsControl ItemsSource="{Binding Properties}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding Value, Mode=OneTime}"
+                            ToolTip="{Binding Key, Mode=OneTime}"
+                            Visibility="{Binding Active, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}"
+                            />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 5 0"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <ItemsControl ItemsSource="{Binding Operations}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button
                             Content="{Binding ShortName}"
                             ToolTip="{Binding FullName}"
                             Command="{Binding Command}"
-                            Visibility="{Binding Visible}"
+                            Visibility="{Binding Active, Converter={StaticResource BooleanToVisibility}}"
                             />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed" />
+                        <WrapPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
-            <!--
-            <WrapPanel Orientation="Horizontal"  >
-                <Button Click="OnMefClick" ToolTip="MEF Errors">mef</Button>
-                <Button Click="OnActivityLogClick" ToolTip="Activity Log">log</Button>
-                <Button Click="OnCommandPromptClick" ToolTip="Developer command prompt">cmd</Button>
-                <Button Click="OnExtensionsClick" ToolTip="Extensions directory">extfds</Button>
-                <Button Click="OnInstallLocationClick" ToolTip="Installation directory">dir</Button>
-            </WrapPanel>
-            -->
-            <ToggleButton IsChecked="{Binding ShowConfiguration}" Content="🔧"/>
+
+            <ToggleButton IsChecked="{Binding ShowConfiguration, Mode=TwoWay}" Content="🔧"/>
         </WrapPanel>
 
-        <StackPanel Visibility="{Binding ShowConfiguration, Converter={StaticResource BooleanToVisibility}}" Orientation="Vertical">
-            <TextBlock Text="Show:" />
-            <CheckBox IsChecked="{Binding ShowInstallationId}" Content="{Binding InstallationId, Converter={StaticResource Prefix}, ConverterParameter='Id'}" />
-            <CheckBox IsChecked="{Binding ShowInstallationChannel}" Content="{Binding InstallationChannel, Converter={StaticResource Prefix}, ConverterParameter='Channel'}" />
-            <CheckBox IsChecked="{Binding ShowInstallationVersion}" Content="{Binding InstallationVersion, Converter={StaticResource Prefix}, ConverterParameter='Version'}" />
-            <CheckBox IsChecked="{Binding ShowSKU}" Content="{Binding SKU, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
-            <CheckBox IsChecked="{Binding ShowMajorVersion}" Content="{Binding MajorVersion, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
-            <CheckBox IsChecked="{Binding ShowPath}" Content="{Binding Path, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
-            <CheckBox IsChecked="{Binding ShowHive}" Content="{Binding Hive, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
-            <CheckBox IsChecked="{Binding ShowRootFolderName}" Content="{Binding RootFolderName, Converter={StaticResource Prefix}, ConverterParameter=Show}" />
+        <!-- Second row: configuration -->
+        <StackPanel Visibility="{Binding ShowConfiguration, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}" Orientation="Vertical">
+            <TextBlock Text="Identify:" />
+
+            <ItemsControl ItemsSource="{Binding Properties, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox
+                            IsChecked="{Binding Active, Mode=TwoWay}"
+                            ToolTip="{Binding Key, Converter={StaticResource Prefix}, ConverterParameter='Select to display property', Mode=OneTime}"
+                            >
+                            <TextBlock>
+                                <Run Text="{Binding Key, Mode=OneTime}"/>
+                                <Run Text=": " />
+                                <Run Text="{Binding Value, Mode=OneTime}"/>
+                            </TextBlock>
+                        </CheckBox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
             <TextBlock Text="Operations:" />
-            <CheckBox IsChecked="{Binding ShowMefErrorLog}" Content="MEF Error Log" />
-            <CheckBox IsChecked="{Binding ShowMefErrorLog}" Content="Activity Log" />
+            
+            <ItemsControl ItemsSource="{Binding Operations}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox
+                            Content="{Binding FullName, Converter={StaticResource Prefix}, ConverterParameter=Show, Mode=OneTime}"
+                            IsChecked="{Binding Active, Mode=TwoWay}"
+                            ToolTip="{Binding ShortName, Converter={StaticResource Prefix}, ConverterParameter='Select to display as', Mode=OneTime}"
+                            />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
         </StackPanel>
     </StackPanel>
 

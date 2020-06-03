@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using VSData = System.Collections.Generic.Dictionary<string, string>;
 
 namespace helperapp
 {
@@ -56,17 +57,17 @@ namespace helperapp
                 var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.ToLower().StartsWith("rootsuffix"))?.Substring("rootsuffix".Length + 1) ?? string.Empty;
                 var rootFolder = path.Split('\\').Reverse().Skip(3).FirstOrDefault() ?? string.Empty;
 
-                vsData = new VSData
+                vsData = new VSData(new Dictionary<string, string>
                 {
-                    InstallationId = installationId,
-                    InstallationChannel = installationChannel.Trim('"'),
-                    InstallationVersion = installationVersion.Trim('"'),
-                    SKU = sku,
-                    MajorVersion = installationVersion.Trim('"').Split('.').First(),
-                    Hive = rootSuffix,
-                    RootFolderName = rootFolder,
-                    Path = path
-                };
+                    { "InstallationId", installationId },
+                    { "InstallationChannel", installationChannel.Trim('"') },
+                    { "InstallationVersion", installationVersion.Trim('"') },
+                    { "SKU", sku },
+                    { "MajorVersion", installationVersion.Trim('"').Split('.').First() },
+                    { "Hive", rootSuffix },
+                    { "RootFolderName", rootFolder },
+                    { "Path", path },
+                });
                 PathToDataMap[path] = vsData;
             }
             return vsData;
@@ -76,7 +77,7 @@ namespace helperapp
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                $"Microsoft\\VisualStudio\\{data.MajorVersion}.0_{data.InstallationId}{hive}",
+                $"Microsoft\\VisualStudio\\{data["MajorVersion"]}.0_{data["InstallationId"]}{hive}",
                 "ComponentModelCache",
                 "Microsoft.VisualStudio.Default.err");
         }
@@ -96,7 +97,7 @@ namespace helperapp
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                $"Microsoft\\VisualStudio\\{data.MajorVersion}.0_{data.InstallationId}{hive}",
+                $"Microsoft\\VisualStudio\\{data["MajorVersion"]}.0_{data["InstallationId"]}{hive}",
                 "ActivityLog.xml");
         }
 
@@ -109,7 +110,7 @@ namespace helperapp
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                $"Microsoft\\VisualStudio\\{data.MajorVersion}.0_{data.InstallationId}{hive}",
+                $"Microsoft\\VisualStudio\\{data["MajorVersion"]}.0_{data["InstallationId"]}{hive}",
                 "Extensions");
         }
     }

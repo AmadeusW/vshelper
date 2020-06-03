@@ -10,7 +10,7 @@ namespace helperapp
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return $"{parameter} {value}";
+            return $"{parameter}: {value}";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

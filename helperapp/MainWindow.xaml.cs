@@ -19,6 +19,7 @@ using PInvoke;
 using System.Management;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Animation;
+using VSData = System.Collections.Generic.Dictionary<string, string>;
 
 namespace helperapp
 {
@@ -59,9 +60,11 @@ namespace helperapp
         private void InitializeUi()
         {
             List<Operation> operations = new List<Operation>();
-            operations.Add(new Operation() { FullName = "Test A", ShortName = "A" });
-            operations.Add(new Operation() { FullName = "Test B", ShortName = "B" });
-            operations.Add(new Operation() { FullName = "Test C", ShortName = "C" });
+            operations.Add(new Operation() { FullName = "MEF Log", ShortName = "mef" });
+            operations.Add(new Operation() { FullName = "Activity Log", ShortName = "act" });
+            operations.Add(new Operation() { FullName = "Developer command prompt", ShortName = "cmd" });
+            operations.Add(new Operation() { FullName = "Installation directory", ShortName = "dir" });
+            operations.Add(new Operation() { FullName = "Extension directory", ShortName = "ext" });
             this.CurrentViewModel = new OperationsViewModel(operations);
             this.DataContext = this.CurrentViewModel;
         }
@@ -118,15 +121,6 @@ namespace helperapp
         private static void UpdateUI(VSData data)
         {
             AppWindow.CurrentViewModel.Data = data;
-            AppWindow.AllUI.Visibility = Visibility.Visible;
-            //AppWindow.Status.Text = $"{data.InstallationChannel} {data.SKU} {data.Hive}";
-            /*
-            //AppWindow.Version.Text = data.InstallationVersion;
-            AppWindow.Title = $"VS Helper - {data.InstallationChannel} {data.Hive}";
-            AppWindow.RecentData = data;
-            AppWindow.RecentPath = data.Path;
-            AppWindow.RecentHive = data.Hive?.Trim() ?? string.Empty;
-            */
         }
 
         private void OnMefClick(object sender, RoutedEventArgs e)

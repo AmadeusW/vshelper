@@ -73,7 +73,6 @@
     </ApplicationDefinition>
     <Compile Include="Operation.cs" />
     <Compile Include="UiConverters.cs" />
-    <Compile Include="VSData.cs" />
     <Compile Include="OperationsViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
