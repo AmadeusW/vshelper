@@ -38,6 +38,8 @@ namespace helperapp
         public delegate void WinEventProc(IntPtr hWinEventHook, User32.WindowsEventHookType @event, IntPtr hwnd, int idObject, int idChild, int dwEventThread, uint dwmsEventTime);
 
         private const string VisibleControlsStoragePath = "visible.txt";
+        private const string OperationsDirectory = "operations";
+        private const string OperationsPattern = "*.yml";
         private WinEventProc Listener;
         private static MainWindow AppWindow;
         private User32.SafeEventHookHandle Hook;
@@ -64,12 +66,7 @@ namespace helperapp
         private void InitializeUi()
         {
             LoadVisibleControls();
-            List<Operation> operations = new List<Operation>();
-            operations.Add(new Operation() { FullName = "MEF Log", ShortName = "mef" });
-            operations.Add(new Operation() { FullName = "Activity Log", ShortName = "act" });
-            operations.Add(new Operation() { FullName = "Developer command prompt", ShortName = "cmd" });
-            operations.Add(new Operation() { FullName = "Installation directory", ShortName = "dir" });
-            operations.Add(new Operation() { FullName = "Extension directory", ShortName = "ext" });
+            var operations = LoadOperations();
             this.CurrentViewModel = new OperationsViewModel(operations, this.DisplayPreference);
             this.DataContext = this.CurrentViewModel;
         }
@@ -108,6 +105,31 @@ namespace helperapp
                     this.DisplayPreference[line] = true;
                 }
             }
+        }
+
+        private IReadOnlyList<Operation> LoadOperations()
+        {
+            List<Operation> operations = new List<Operation>();
+            Directory.CreateDirectory(OperationsDirectory);
+            foreach (var file in Directory.EnumerateFiles(OperationsDirectory, OperationsPattern))
+            {
+                var operation = LoadOperation(file);
+                operations.Add(operation);
+            }
+
+            // Temporarily,
+            operations.Add(new Operation() { FullName = "MEF Log", ShortName = "mef" });
+            operations.Add(new Operation() { FullName = "Activity Log", ShortName = "act" });
+            operations.Add(new Operation() { FullName = "Developer command prompt", ShortName = "cmd" });
+            operations.Add(new Operation() { FullName = "Installation directory", ShortName = "dir" });
+            operations.Add(new Operation() { FullName = "Extension directory", ShortName = "ext" });
+
+            return operations.AsReadOnly();
+        }
+
+        private Operation LoadOperation(string file)
+        {
+            throw new NotImplementedException();
         }
 
         static void target(IntPtr hWinEventHook, User32.WindowsEventHookType @event, IntPtr hwnd, int idObject, int idChild, int dwEventThread, uint dwmsEventTime)
