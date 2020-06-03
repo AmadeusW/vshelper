@@ -10,5 +10,6 @@ namespace helperapp
     {
         public string FullName { get; internal set; }
         public string ShortName { get; internal set; }
+        public string Format { get; internal set; }
     }
 }
