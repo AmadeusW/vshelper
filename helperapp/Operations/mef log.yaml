@@ -1,0 +1,4 @@
+FullName: MEF error log
+ShortName: mef
+Path: \(SpecialFolder.ApplicationData)\Microsoft\VisualStudio\(MajorVersion).0_(InstallationId)(Hive)\ComponentModelCache\Microsoft.VisualStudio.Default.err
+Arguments: 

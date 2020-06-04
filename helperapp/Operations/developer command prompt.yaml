@@ -1,0 +1,4 @@
+FullName: Developer command prompt
+ShortName: cmd
+Path: (%comspec%)
+Arguments: /k "(path)\..\Tools\VsDevCmd.bat"

@@ -1,0 +1,4 @@
+FullName: Extension directory
+ShortName: ext
+Path: \{SpecialFolder.ApplicationData}\Microsoft\VisualStudio\{MajorVersion}.0_{InstallationId}{Hive}\Extensions
+Arguments: 

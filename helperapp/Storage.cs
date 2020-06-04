@@ -13,7 +13,7 @@ namespace helperapp
     internal static class Storage
     {
         private const string VisibleControlsStoragePath = "visible.txt";
-        private const string OperationsDirectory = "operations";
+        private const string OperationsDirectory = "Operations";
         private const string OperationsPattern = "*.yaml";
 
         internal static void SaveVisibleControls(Dictionary<string, bool> settings)

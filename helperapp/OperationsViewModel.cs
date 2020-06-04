@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -11,18 +12,54 @@ using VSData = System.Collections.Generic.Dictionary<string, string>;
 
 namespace helperapp
 {
+    public class InvokeOperationCommand : ICommand
+    {
+        private readonly Operation operation;
+        private readonly IDataOwner dataOwner;
+        private string formattedPath = null;
+        private string formattedArguments = null;
+
+        public InvokeOperationCommand(Operation operation, IDataOwner dataOwner)
+        {
+            this.operation = operation;
+            this.dataOwner = dataOwner;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter) => true;
+
+        public void Execute(object parameter)
+        {
+            if (formattedPath == null)
+                formattedPath = OperationFormatter.Format(operation.Path ?? string.Empty, dataOwner.Data);
+            if (formattedArguments == null)
+                formattedArguments = OperationFormatter.Format(operation.Arguments ?? string.Empty, dataOwner.Data);
+            Invoke(formattedPath, formattedArguments);
+        }
+
+        private void Invoke(string path, string args)
+        {
+            Process.Start(path, args);
+            // TODO: report exception message
+        }
+    }
+
     public class OperationViewModel : ViewModelWithPersistingDisplay
     {
         public string FullName => operation.FullName;
         public string ShortName => operation.ShortName;
-        public ICommand Command { get; set; }
+        public InvokeOperationCommand Command { get; set; }
 
         private Operation operation;
+        private readonly IDataOwner dataOwner;
 
-        public OperationViewModel(Operation operation, IDictionary<string, bool> displayPreference)
+        public OperationViewModel(Operation operation, IDictionary<string, bool> displayPreference, IDataOwner dataOwner)
             : base(operation.FullName, displayPreference)
         {
             this.operation = operation;
+            this.dataOwner = dataOwner;
+            this.Command = new InvokeOperationCommand(operation, dataOwner);
         }
     }
 
@@ -70,7 +107,7 @@ namespace helperapp
         }
     }
 
-    public class OperationsViewModel : NotifyPropertyChangedBase
+    public class OperationsViewModel : NotifyPropertyChangedBase, IDataOwner
     {
         public IList<OperationViewModel> Operations { get; }
         public IDictionary<string, bool> DisplayPreference { get; }
@@ -95,9 +132,14 @@ namespace helperapp
         {
             DisplayPreference = displayPreference;
             Header = string.Empty;
-            Operations = operations.Select(n => new OperationViewModel(n, DisplayPreference)).ToList();
+            Operations = operations.Select(n => new OperationViewModel(n, DisplayPreference, this)).ToList();
             Properties = new List<PropertyViewModel>();
         }
+    }
+
+    public interface IDataOwner
+    {
+        VSData Data { get; }
     }
 
     public class NotifyPropertyChangedBase : INotifyPropertyChanged
