@@ -35,6 +35,7 @@
         <local:PrefixConverter x:Key="Prefix" />
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
         <local:StringToVisibilityConverter x:Key="StringToVisibility" />
+        <local:NotNullToVisibilityConverter x:Key="NotNullToVisibility" />
     </Window.Resources>
 
     <StackPanel Orientation="Vertical" Style="{StaticResource MainPanel}">
@@ -59,7 +60,7 @@
                 </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
+                        <WrapPanel Orientation="Horizontal" Visibility="{Binding Data, Converter={StaticResource NotNullToVisibility}}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
