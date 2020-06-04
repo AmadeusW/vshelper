@@ -31,6 +31,13 @@ namespace helperapp
                     settings[line] = true;
                 }
             }
+            else
+            {
+                // Seed default settings for new installations
+                settings["InstallationVersion"] = true;
+                settings["InstallationDirectory"] = true;
+                settings["Developer command prompt"] = true;
+            }
             return settings;
         }
 
