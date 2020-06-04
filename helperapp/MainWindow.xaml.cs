@@ -1,12 +1,9 @@
 ﻿using PInvoke;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Management;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using VSData = System.Collections.Generic.Dictionary<string, string>;
 
