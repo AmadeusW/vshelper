@@ -55,7 +55,8 @@ namespace helperapp
                     throw new Exception($"Could not find {skuString} in {configurationFile}");
 
                 var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.ToLower().StartsWith("rootsuffix"))?.Substring("rootsuffix".Length + 1) ?? string.Empty;
-                var rootFolder = path.Split('\\').Reverse().Skip(3).FirstOrDefault() ?? string.Empty;
+                var installationDir = path.Split('\\').Reverse().Skip(3).FirstOrDefault() ?? string.Empty;
+                var exeDir = Path.GetDirectoryName(path);
 
                 vsData = new VSData(new Dictionary<string, string>
                 {
@@ -65,8 +66,9 @@ namespace helperapp
                     { "SKU", sku },
                     { "MajorVersion", installationVersion.Trim('"').Split('.').First() },
                     { "Hive", rootSuffix },
-                    { "RootFolderName", rootFolder },
-                    { "Path", path },
+                    { "InstallationDirectory", installationDir },
+                    { "ExePath", path },
+                    { "ExeDirectory", exeDir },
                 });
                 PathToDataMap[path] = vsData;
             }
