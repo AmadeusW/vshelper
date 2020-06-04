@@ -4,42 +4,145 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:helperapp"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
         Title="VS Helper" 
         SizeToContent="WidthAndHeight"
         Loaded="Window_Loaded"
-        WindowStyle="ToolWindow"
+        WindowStyle="None"
         Topmost="True"
-        Closed="Window_Closed"
+        Closed="Window_Closed" MouseDown="Window_MouseDown"
+        Name="WindowName"
         >
     <Window.Resources>
-        <Style TargetType="{x:Type TextBlock}" x:Key="Header">
-            <Setter Property="Margin" Value="5 0 5 0"></Setter>
-            <Setter Property="FontSize" Value="11"></Setter>
+        <Style TargetType="{x:Type TextBlock}" x:Key="Identification">
+            <Setter Property="Margin" Value="0 0 2 0"></Setter>
+        </Style>
+        <Style TargetType="{x:Type TextBlock}" x:Key="ConfigurationHeader">
+            <Setter Property="Margin" Value="0 5 0 2"></Setter>
         </Style>
         <Style TargetType="{x:Type Button}">
-            <Setter Property="Height" Value="40"></Setter>
-            <Setter Property="Width" Value="60"></Setter>
+            <Setter Property="Padding" Value="4 2"></Setter>
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
+        <Style TargetType="{x:Type ToggleButton}">
+            <Setter Property="Padding" Value="4 2"></Setter>
+            <Setter Property="FontSize" Value="11"></Setter>
+        </Style>
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="MaxWidth" Value="200"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+        </Style>
+        <Style TargetType="{x:Type StackPanel}" x:Key="MainPanel">
+            <Setter Property="Margin" Value="5"></Setter>
+        </Style>
+        <local:PrefixConverter x:Key="Prefix" />
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+        <local:StringToVisibilityConverter x:Key="StringToVisibility" />
+        <local:NotNullToVisibilityConverter x:Key="NotNullToVisibility" />
     </Window.Resources>
-    <StackPanel Orientation="Vertical">
-        <TextBlock Name="Status" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Status, Path=Text}" MinWidth="230" Margin="5 5 5 0">Use Visual Studio to get started</TextBlock>
-        <TextBlock Name="Version" Style="{StaticResource ResourceKey=Header}" ToolTip="{Binding ElementName=Version, Path=Text}" MinWidth="230" Margin="5 0 5 5"></TextBlock>
-        <WrapPanel Orientation="Horizontal" Name="AllUI" Visibility="Collapsed">
-            <Button Click="OnMefClick">
-                <TextBlock>MEF<LineBreak/>Errors</TextBlock>
-            </Button>
-            <Button Click="OnActivityLogClick">
-                <TextBlock>Activity<LineBreak/>Log</TextBlock>
-            </Button>
-            <Button Click="OnCommandPromptClick">CMD</Button>
-            <Button Click="OnExtensionsClick">
-                <TextBlock>Extension<LineBreak/>DIR</TextBlock>
-            </Button>
-            <Button Click="OnInstallLocationClick">
-                <TextBlock>Installation<LineBreak/>DIR</TextBlock>
-            </Button>
+
+    <StackPanel Orientation="Vertical" Style="{StaticResource MainPanel}">
+
+        <!-- First row: identification and operations -->
+        <WrapPanel Orientation="Horizontal">
+
+            <ToggleButton 
+                Content="…"
+                ToolTip="Configure"
+                IsChecked="{Binding ShowConfiguration, Mode=TwoWay}" 
+            />
+
+            <ItemsControl ItemsSource="{Binding Operations}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button
+                            Content="{Binding ShortName}"
+                            ToolTip="{Binding FullName}"
+                            Command="{Binding Command}"
+                            Visibility="{Binding Active, Converter={StaticResource BooleanToVisibility}}"
+                            />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" Visibility="{Binding Data, Converter={StaticResource NotNullToVisibility}}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <TextBlock 
+                Text="{Binding Header}" 
+                Visibility="{Binding Header, Converter={StaticResource StringToVisibility}}"
+                ToolTip="{Binding HeaderDetails}"
+                Margin="5 0 0 0"
+            />
+
+            <ItemsControl ItemsSource="{Binding Properties}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding Value, Mode=OneTime}"
+                            ToolTip="{Binding Key, Mode=OneTime}"
+                            Visibility="{Binding Active, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}"
+                            Style="{StaticResource Identification}"
+                            />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 5 0"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </WrapPanel>
+
+        <!-- Second row: configuration -->
+        <StackPanel Visibility="{Binding ShowConfiguration, Converter={StaticResource BooleanToVisibility}, Mode=OneWay}" Orientation="Vertical">
+            <TextBlock Text="Identify:" Style="{StaticResource ConfigurationHeader}" />
+
+            <ItemsControl ItemsSource="{Binding Properties, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox
+                            IsChecked="{Binding Active, Mode=TwoWay}"
+                            ToolTip="{Binding Value, Converter={StaticResource Prefix}, ConverterParameter='Select to display', Mode=OneTime}"
+                            >
+                            <TextBlock>
+                                <Run Text="{Binding Key, Mode=OneTime}"/>
+                                <Run Text="-" />
+                                <Run Text="{Binding Value, Mode=OneTime}"/>
+                            </TextBlock>
+                        </CheckBox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <TextBlock Text="Operations:" Style="{StaticResource ConfigurationHeader}" />
+            
+            <ItemsControl ItemsSource="{Binding Operations}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox
+                            Content="{Binding FullName}"
+                            IsChecked="{Binding Active, Mode=TwoWay}"
+                            ToolTip="{Binding ShortName, Converter={StaticResource Prefix}, ConverterParameter='Select to display as', Mode=OneTime}"
+                            />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+        </StackPanel>
     </StackPanel>
+
 </Window>

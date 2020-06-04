@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using VSData = System.Collections.Generic.Dictionary<string, string>;
 
 namespace helperapp
 {
@@ -15,7 +14,7 @@ namespace helperapp
         const string installationVersionString = "DisplayVersion";
         const string skuString = "SKU";
 
-        public static VSData GetVsId(string path)
+        public static VSData GetVsData(string path, string arguments)
         {
             VSData vsData;
             if (!PathToDataMap.TryGetValue(path, out vsData))
@@ -54,14 +53,23 @@ namespace helperapp
                     throw new Exception($"Could not find {installationVersionString} in {configurationFile}");
                 if (string.IsNullOrEmpty(sku))
                     throw new Exception($"Could not find {skuString} in {configurationFile}");
-                vsData = new VSData
+
+                var rootSuffix = arguments.Split('/').FirstOrDefault(n => n.ToLower().StartsWith("rootsuffix"))?.Substring("rootsuffix".Length + 1) ?? string.Empty;
+                var installationDir = path.Split('\\').Reverse().Skip(3).FirstOrDefault() ?? string.Empty;
+                var exeDir = Path.GetDirectoryName(path);
+
+                vsData = new VSData(new Dictionary<string, string>
                 {
-                    InstallationId = installationId,
-                    InstallationChannel = installationChannel.Trim('"'),
-                    InstallationVersion = installationVersion.Trim('"'),
-                    SKU = sku,
-                    MajorVersion = installationVersion.Trim('"').Split('.').First(),
-                };
+                    { "InstallationId", installationId },
+                    { "InstallationChannel", installationChannel.Trim('"') },
+                    { "InstallationVersion", installationVersion.Trim('"') },
+                    { "SKU", sku },
+                    { "MajorVersion", installationVersion.Trim('"').Split('.').First() },
+                    { "Hive", rootSuffix },
+                    { "InstallationDirectory", installationDir },
+                    { "ExePath", path },
+                    { "ExeDirectory", exeDir },
+                });
                 PathToDataMap[path] = vsData;
             }
             return vsData;
@@ -71,7 +79,7 @@ namespace helperapp
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                $"Microsoft\\VisualStudio\\{data.MajorVersion}.0_{data.InstallationId}{hive}",
+                $"Microsoft\\VisualStudio\\{data["MajorVersion"]}.0_{data["InstallationId"]}{hive}",
                 "ComponentModelCache",
                 "Microsoft.VisualStudio.Default.err");
         }
@@ -91,7 +99,7 @@ namespace helperapp
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                $"Microsoft\\VisualStudio\\{data.MajorVersion}.0_{data.InstallationId}{hive}",
+                $"Microsoft\\VisualStudio\\{data["MajorVersion"]}.0_{data["InstallationId"]}{hive}",
                 "ActivityLog.xml");
         }
 
@@ -104,7 +112,7 @@ namespace helperapp
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                $"Microsoft\\VisualStudio\\{data.MajorVersion}.0_{data.InstallationId}{hive}",
+                $"Microsoft\\VisualStudio\\{data["MajorVersion"]}.0_{data["InstallationId"]}{hive}",
                 "Extensions");
         }
     }
