@@ -1,6 +1,7 @@
 ﻿using SharpYaml.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,10 +13,10 @@ namespace helperapp
     {
         private const string SpecialFolder = "SpecialFolder.";
 
-        public static string Format(string path, Dictionary<string, string> properties)
+        public static string Format(string format, Dictionary<string, string> properties)
         {
             var pattern = new Regex(@"\(.*?\)");
-            var formatted = pattern.Replace(path, new MatchEvaluator(EvaluateGroup));
+            var formatted = pattern.Replace(format, new MatchEvaluator(EvaluateGroup));
             return formatted;
 
             string EvaluateGroup(Match match)
@@ -38,6 +39,11 @@ namespace helperapp
                 else if (properties.TryGetValue(special, out string value))
                 {
                     return value;
+                }
+                else
+                {
+                    // We were unable to expand this match
+                    Debugger.Break();
                 }
                 return match.Groups[0].ToString();
             }

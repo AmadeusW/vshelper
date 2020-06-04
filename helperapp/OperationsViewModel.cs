@@ -16,8 +16,6 @@ namespace helperapp
     {
         private readonly Operation operation;
         private readonly OperationsViewModel owner;
-        private string formattedPath = null;
-        private string formattedArguments = null;
 
         public InvokeOperationCommand(Operation operation, OperationsViewModel owner)
         {
@@ -31,10 +29,8 @@ namespace helperapp
 
         public void Execute(object parameter)
         {
-            if (formattedPath == null)
-                formattedPath = OperationFormatter.Format(operation.Path ?? string.Empty, owner.Data);
-            if (formattedArguments == null)
-                formattedArguments = OperationFormatter.Format(operation.Arguments ?? string.Empty, owner.Data);
+            var formattedPath = OperationFormatter.Format(operation.Path ?? string.Empty, owner.Data);
+            var formattedArguments = OperationFormatter.Format(operation.Arguments ?? string.Empty, owner.Data);
             Invoke(formattedPath, formattedArguments);
         }
 
