@@ -25,6 +25,10 @@
             <Setter Property="Padding" Value="4 2"></Setter>
             <Setter Property="FontSize" Value="11"></Setter>
         </Style>
+        <Style TargetType="{x:Type ToggleButton}">
+            <Setter Property="Padding" Value="4 2"></Setter>
+            <Setter Property="FontSize" Value="11"></Setter>
+        </Style>
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="MaxWidth" Value="200"></Setter>
             <Setter Property="HorizontalAlignment" Value="Left"></Setter>
@@ -40,12 +44,14 @@
 
     <StackPanel Orientation="Vertical" Style="{StaticResource MainPanel}">
 
-        <TextBlock x:Name="Status" Visibility="{Binding Path=Text, ElementName=Status, Converter={StaticResource StringToVisibility}}"/>
-
         <!-- First row: identification and operations -->
         <WrapPanel Orientation="Horizontal">
 
-            <ToggleButton IsChecked="{Binding ShowConfiguration, Mode=TwoWay}" Content="…"/>
+            <ToggleButton 
+                Content="…"
+                ToolTip="Configure"
+                IsChecked="{Binding ShowConfiguration, Mode=TwoWay}" 
+            />
 
             <ItemsControl ItemsSource="{Binding Operations}">
                 <ItemsControl.ItemTemplate>
@@ -64,6 +70,13 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
+
+            <TextBlock 
+                Text="{Binding Header}" 
+                Visibility="{Binding Header, Converter={StaticResource StringToVisibility}}"
+                ToolTip="{Binding HeaderDetails}"
+                Margin="5 0 0 0"
+            />
 
             <ItemsControl ItemsSource="{Binding Properties}">
                 <ItemsControl.ItemTemplate>
@@ -93,7 +106,7 @@
                     <DataTemplate>
                         <CheckBox
                             IsChecked="{Binding Active, Mode=TwoWay}"
-                            ToolTip="{Binding Key, Converter={StaticResource Prefix}, ConverterParameter='Select to display property', Mode=OneTime}"
+                            ToolTip="{Binding Value, Converter={StaticResource Prefix}, ConverterParameter='Select to display', Mode=OneTime}"
                             >
                             <TextBlock>
                                 <Run Text="{Binding Key, Mode=OneTime}"/>

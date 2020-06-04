@@ -15,14 +15,14 @@ namespace helperapp
     public class InvokeOperationCommand : ICommand
     {
         private readonly Operation operation;
-        private readonly IDataOwner dataOwner;
+        private readonly OperationsViewModel owner;
         private string formattedPath = null;
         private string formattedArguments = null;
 
-        public InvokeOperationCommand(Operation operation, IDataOwner dataOwner)
+        public InvokeOperationCommand(Operation operation, OperationsViewModel owner)
         {
             this.operation = operation;
-            this.dataOwner = dataOwner;
+            this.owner = owner;
         }
 
         public event EventHandler CanExecuteChanged;
@@ -32,16 +32,22 @@ namespace helperapp
         public void Execute(object parameter)
         {
             if (formattedPath == null)
-                formattedPath = OperationFormatter.Format(operation.Path ?? string.Empty, dataOwner.Data);
+                formattedPath = OperationFormatter.Format(operation.Path ?? string.Empty, owner.Data);
             if (formattedArguments == null)
-                formattedArguments = OperationFormatter.Format(operation.Arguments ?? string.Empty, dataOwner.Data);
+                formattedArguments = OperationFormatter.Format(operation.Arguments ?? string.Empty, owner.Data);
             Invoke(formattedPath, formattedArguments);
         }
 
         private void Invoke(string path, string args)
         {
-            Process.Start(path, args);
-            // TODO: report exception message
+            try
+            {
+                Process.Start(path, args);
+            }
+            catch (Exception ex)
+            {
+                owner.ShowError(ex);
+            }
         }
     }
 
@@ -52,14 +58,14 @@ namespace helperapp
         public InvokeOperationCommand Command { get; set; }
 
         private Operation operation;
-        private readonly IDataOwner dataOwner;
+        private readonly OperationsViewModel owner;
 
-        public OperationViewModel(Operation operation, IDictionary<string, bool> displayPreference, IDataOwner dataOwner)
+        public OperationViewModel(Operation operation, IDictionary<string, bool> displayPreference, OperationsViewModel owner)
             : base(operation.FullName, displayPreference)
         {
             this.operation = operation;
-            this.dataOwner = dataOwner;
-            this.Command = new InvokeOperationCommand(operation, dataOwner);
+            this.owner = owner;
+            this.Command = new InvokeOperationCommand(operation, owner);
         }
     }
 
@@ -107,14 +113,15 @@ namespace helperapp
         }
     }
 
-    public class OperationsViewModel : NotifyPropertyChangedBase, IDataOwner
+    public class OperationsViewModel : NotifyPropertyChangedBase
     {
         public IList<OperationViewModel> Operations { get; }
         public IDictionary<string, bool> DisplayPreference { get; }
 
         public List<PropertyViewModel> Properties { get; private set; }
 
-        public string Header { get; set; } = "Use Visual Studio to get started";
+        public string Header { get; set; }
+        public string HeaderDetails { get; set; }
 
         private VSData data;
         public VSData Data { get { return this.data; } set { this.data = value; UpdateProperties(); NotifyPropertyChanged(""); } }
@@ -128,18 +135,31 @@ namespace helperapp
             NotifyPropertyChanged(nameof(Properties));
         }
 
+        internal void ShowError(Exception ex)
+        {
+            this.ShowMessage(ex.Message, ex.ToString());
+        }
+
+        internal void ShowMessage(string message, string detail = null)
+        {
+            this.Header = message ?? string.Empty;
+            this.HeaderDetails = detail ?? string.Empty;
+        }
+
+        internal void ResetMessage()
+        {
+            this.Header = string.Empty;
+            this.HeaderDetails = string.Empty;
+        }
+
         public OperationsViewModel(IEnumerable<Operation> operations, IDictionary<string, bool> displayPreference)
         {
             DisplayPreference = displayPreference;
-            Header = string.Empty;
+            Header = "Use Visual Studio to get started";
+            HeaderDetails = "This app updates every time an instance of Visual Studio gets focus";
             Operations = operations.Select(n => new OperationViewModel(n, DisplayPreference, this)).ToList();
             Properties = new List<PropertyViewModel>();
         }
-    }
-
-    public interface IDataOwner
-    {
-        VSData Data { get; }
     }
 
     public class NotifyPropertyChangedBase : INotifyPropertyChanged

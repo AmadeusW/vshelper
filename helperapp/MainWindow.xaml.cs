@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,7 +44,14 @@ namespace helperapp
             }
             catch (Exception ex)
             {
-                AppWindow.Status.Text = ex.Message;
+                if (AppWindow.CurrentViewModel != null)
+                {
+                    AppWindow.CurrentViewModel.ShowError(ex);
+                }
+                else
+                {
+                    MessageBox.Show(ex.ToString(), ex.Message);
+                }
             }
         }
 
@@ -80,12 +88,10 @@ namespace helperapp
                 var threadId = User32.GetWindowThreadProcessId(hwnd, out int processId);
                 if (processId == 0)
                 {
-                    AppWindow.Status.Text = "Unable to get process data";
+                    AppWindow.CurrentViewModel.ShowMessage("Unable to get process data");
                 }
                 else
                 {
-                    AppWindow.Status.Text = string.Empty;
-
                     String[] properties = { "Name", "ExecutablePath", "CommandLine" };
                     SelectQuery s = new SelectQuery("Win32_Process",
                        $"ProcessID = '{processId}' ",
@@ -101,6 +107,9 @@ namespace helperapp
                             return;
                         }
 
+                        // We found VS. Reset previous message (either error or the welcome message)
+                        AppWindow.CurrentViewModel.ResetMessage();
+
                         var data = DevenvAnalyzer.GetVsData(o["ExecutablePath"].ToString(), o["CommandLine"].ToString());
                         UpdateUI(data);
                     }
@@ -108,86 +117,19 @@ namespace helperapp
             }
             catch (Exception ex)
             {
-                AppWindow.Status.Text = ex.Message;
+                AppWindow.CurrentViewModel.ShowError(ex);
             }
         }
 
-        private void OnMefClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var mefPath = DevenvAnalyzer.GetMefErrorsPath(RecentData, RecentHive);
-                Process.Start(mefPath);
-            }
-            catch(Exception ex)
-            {
-                Status.Text = ex.Message;
-            }
-        }
-
-        private void OnActivityLogClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var activityLogPath = DevenvAnalyzer.GetActivityLogPath(RecentData, RecentHive);
-                Process.Start(activityLogPath);
-            }
-            catch (Exception ex)
-            {
-                Status.Text = ex.Message;
-            }
-        }
-
-        private void OnCommandPromptClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var (commandLinePath, args) = DevenvAnalyzer.GetCommandLinePathAndArgs(RecentData, RecentPath, RecentHive);
-                Process.Start(commandLinePath, args);
-            }
-            catch (Exception ex)
-            {
-                Status.Text = ex.Message;
-            }
-        }
-
-        private void OnInstallLocationClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var installationPath = DevenvAnalyzer.GetInstallationPath(RecentPath);
-                Process.Start(installationPath);
-            }
-            catch (Exception ex)
-            {
-                Status.Text = ex.Message;
-            }
-        }
-
-        private void OnExtensionsClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var extensionPath = DevenvAnalyzer.GetExtensionPath(RecentData, RecentHive);
-                Process.Start(extensionPath);
-            }
-            catch (Exception ex)
-            {
-                Status.Text = ex.Message;
-            }
-        }
-
+        /// <summary>
+        /// Allows dragging the window by its entire surface
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
-        }
-
-        private void OnMoreClick(object sender, RoutedEventArgs e)
-        {
-            var uiElement = sender as Control;
-            if (uiElement?.ContextMenu != null)
-                uiElement.ContextMenu.IsOpen = true;
         }
     }
 }
