@@ -123,8 +123,10 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
 
-            <TextBlock Text="Operations:" Style="{StaticResource ConfigurationHeader}" />
-            
+            <TextBlock Style="{StaticResource ConfigurationHeader}" >
+                <Hyperlink RequestNavigate="OnOperationsClick" NavigateUri=" ">Operations</Hyperlink><Run>:</Run>
+            </TextBlock>
+
             <ItemsControl ItemsSource="{Binding Operations}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

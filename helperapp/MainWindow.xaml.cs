@@ -128,5 +128,11 @@ namespace helperapp
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
+
+        private void OnOperationsClick(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            var operationsPath = Storage.GetOperationsPath();
+            OsIntegration.Invoke(operationsPath);
+        }
     }
 }

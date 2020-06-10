@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -65,6 +66,11 @@ namespace helperapp
             var streamReader = File.OpenText(file);
             var operation = new Deserializer().Deserialize<Operation>(streamReader);
             return operation;
+        }
+
+        internal static string GetOperationsPath()
+        {
+            return Path.GetFullPath(OperationsDirectory);
         }
     }
 }

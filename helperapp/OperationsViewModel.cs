@@ -29,14 +29,9 @@ namespace helperapp
         {
             var formattedPath = OperationFormatter.Format(operation.Path ?? string.Empty, owner.Data);
             var formattedArguments = OperationFormatter.Format(operation.Arguments ?? string.Empty, owner.Data);
-            Invoke(formattedPath, formattedArguments);
-        }
-
-        private void Invoke(string path, string args)
-        {
             try
             {
-                Process.Start(path, args);
+                OsIntegration.Invoke(formattedPath, formattedArguments);
             }
             catch (Exception ex)
             {

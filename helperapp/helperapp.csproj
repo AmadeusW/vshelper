@@ -76,6 +76,7 @@
     </ApplicationDefinition>
     <Compile Include="Operation.cs" />
     <Compile Include="OperationFormatter.cs" />
+    <Compile Include="OsIntegration.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="UiConverters.cs" />
     <Compile Include="OperationsViewModel.cs" />
