@@ -1,4 +1,4 @@
 FullName: Activity Log
 ShortName: log
-Path: (SpecialFolder.ApplicationData)\Microsoft\VisualStudio\(MajorVersion).0_(InstallationId)(Hive)\ActivityLog.xml
+Path: (SpecialFolder.LocalApplicationData)\Microsoft\VisualStudio\(MajorVersion).0_(InstallationId)(Hive)\ActivityLog.xml
 Arguments: 
